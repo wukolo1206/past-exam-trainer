@@ -120,14 +120,25 @@ function renderQuestion(idx) {
 
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
-  const optKeys = Object.keys(q.options).sort((a, b) => Number(a) - Number(b));
+  const rawKeys = Object.keys(q.options).sort((a, b) => Number(a) - Number(b));
+  // 含圖題 options 為空時，補 ①②③④ 空白按鈕（選項文字在圖片中）
+  const optKeys = rawKeys.length > 0 ? rawKeys : ['1', '2', '3', '4'];
+  const isImgOnly = rawKeys.length === 0;
+  if (isImgOnly) {
+    const hint = document.createElement('p');
+    hint.className = 'text-xs text-gray-400 font-bold mb-2';
+    hint.textContent = '（選項請見上方圖片）';
+    optContainer.appendChild(hint);
+  }
   optKeys.forEach(key => {
     const btn = document.createElement('button');
     btn.className = 'opt-btn w-full px-4 py-3.5 rounded-xl font-bold text-gray-700 text-sm flex items-center gap-3';
     btn.dataset.key = key;
-    btn.innerHTML =
-      '<span class="text-blue-500 font-black text-base flex-shrink-0">' + OPT_SYMBOLS[Number(key) - 1] + '</span>' +
-      '<span>' + q.options[key] + '</span>';
+    const labelText = isImgOnly
+      ? '<span class="text-blue-500 font-black text-lg flex-shrink-0">' + OPT_SYMBOLS[Number(key) - 1] + '</span>'
+      : '<span class="text-blue-500 font-black text-base flex-shrink-0">' + OPT_SYMBOLS[Number(key) - 1] + '</span>' +
+        '<span>' + q.options[key] + '</span>';
+    btn.innerHTML = labelText;
     if (answers[idx].chosen !== null) {
       btn.classList.add('answered');
       applyStyle(btn, Number(key), q.answer, answers[idx].chosen);
