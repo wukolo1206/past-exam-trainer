@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教師分析 Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+    .hidden { display: none !important; }
+    .cell-green  { background: #dcfce7; color: #166534; font-weight: 700; }
+    .cell-yellow { background: #fef9c3; color: #854d0e; font-weight: 700; }
+    .cell-red    { background: #fee2e2; color: #991b1b; font-weight: 700; }
+    .cell-gray   { background: #f9fafb; color: #9ca3af; }
+    .matrix-table { font-size: 0.72rem; border-collapse: collapse; white-space: nowrap; }
+    .matrix-table th { background: #f0f9ff; padding: 0.3em 0.5em; font-weight: 700; color: #0284c7; border: 1px solid #bae6fd; }
+    .matrix-table td { padding: 0.3em 0.5em; border: 1px solid #e5e7eb; text-align: center; }
+    .matrix-table td.name-cell { text-align: left; font-weight: 700; color: #374151; }
+  </style>
+</head>
+<body class="antialiased p-4 md:p-8">
+
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl font-black text-blue-900">👨‍🏫 教師分析 Dashboard</h1>
+      <a href="index.html" class="text-sm text-blue-500 font-bold">← 回首頁</a>
+    </div>
+
+    <!-- 選班級 -->
+    <div class="glass rounded-2xl p-5">
+      <div class="flex gap-3 items-end">
+        <div class="flex-1">
+          <label class="block text-xs font-bold text-gray-500 mb-1">選擇班級</label>
+          <select id="t-class" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold">
+            <option value="">-- 選班級 --</option>
+            <option value="301">301 班</option><option value="302">302 班</option>
+            <option value="303">303 班</option><option value="304">304 班</option>
+          </select>
+        </div>
+        <button onclick="loadDashboard()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition">載入資料</button>
+        <button onclick="downloadCSV()" id="btn-csv" class="hidden px-4 py-3 border-2 border-blue-300 text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition text-sm">⬇ CSV</button>
+      </div>
+    </div>
+
+    <div id="loading" class="hidden text-center text-gray-400 py-8 font-bold">載入中...</div>
+
+    <!-- 指標熱圖 -->
+    <div id="section-heatmap" class="glass rounded-2xl p-5 hidden">
+      <h3 class="font-black text-gray-800 mb-3">📊 指標答對率熱圖</h3>
+      <div id="heatmap-list" class="space-y-2"></div>
+    </div>
+
+    <!-- 最難題 Top 10 -->
+    <div id="section-hard" class="glass rounded-2xl p-5 hidden">
+      <h3 class="font-black text-gray-800 mb-3">😓 最難題 Top 10</h3>
+      <div id="hard-list"></div>
+    </div>
+
+    <!-- 學生進度矩陣 -->
+    <div id="section-matrix" class="glass rounded-2xl p-5 hidden">
+      <h3 class="font-black text-gray-800 mb-3">🗂 班級進度矩陣（學生 × 指標）</h3>
+      <p class="text-xs text-gray-400 mb-3">🟩 ≥80%　🟨 60-79%　🟥 &lt;60%　灰 = 尚無作答</p>
+      <div class="overflow-x-auto">
+        <table id="matrix-table" class="matrix-table"></table>
+      </div>
+    </div>
+  </div>
+
+<script>
+const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+let dashboardData = null;
+let currentClass = '';
+
+async function loadDashboard() {
+  const cls = document.getElementById('t-class').value;
+  if (!cls) { alert('請選擇班級'); return; }
+  currentClass = cls;
+  document.getElementById('loading').classList.remove('hidden');
+  ['section-heatmap','section-hard','section-matrix'].forEach(id => document.getElementById(id).classList.add('hidden'));
+
+  try {
+    const res = await fetch(GAS_URL + '?action=dashboard&class=' + cls);
+    dashboardData = await res.json();
+    renderDashboard(dashboardData);
+    document.getElementById('btn-csv').classList.remove('hidden');
+  } catch(e) {
+    alert('載入失敗：' + e.message);
+  } finally {
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+function cellClass(rate) {
+  if (rate === null) return 'cell-gray';
+  if (rate >= 0.8) return 'cell-green';
+  if (rate >= 0.6) return 'cell-yellow';
+  return 'cell-red';
+}
+
+function renderDashboard(data) {
+  // 1. 指標熱圖
+  const hmList = document.getElementById('heatmap-list');
+  hmList.innerHTML = data.indicatorHeatmap.map(item => {
+    const pct = item.rate !== null ? Math.round(item.rate * 100) : null;
+    const color = pct === null ? '#9ca3af' : pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+    return '<div class="flex items-center gap-2 text-sm">' +
+      '<span class="font-black w-16 flex-shrink-0 text-xs text-gray-700">' + item.indicator + '</span>' +
+      '<div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><div style="width:' + (pct||0) + '%;background:' + color + ';height:100%;border-radius:4px"></div></div>' +
+      '<span class="text-xs font-bold w-12 text-right" style="color:' + color + '">' + (pct !== null ? pct + '%' : '-') + '</span>' +
+      '</div>';
+  }).join('');
+  document.getElementById('section-heatmap').classList.remove('hidden');
+
+  // 2. 最難題
+  const hardList = document.getElementById('hard-list');
+  if (data.hardestQuestions.length === 0) {
+    hardList.innerHTML = '<p class="text-gray-400 text-sm">資料不足（需各題至少 3 人作答）</p>';
+  } else {
+    hardList.innerHTML = '<table class="w-full text-sm">' +
+      '<thead><tr class="text-gray-400 text-xs border-b"><th class="text-left pb-2">年份</th><th class="text-left pb-2">題號</th><th class="text-left pb-2">指標</th><th class="text-right pb-2">班級答對率</th></tr></thead>' +
+      '<tbody>' + data.hardestQuestions.map(q => {
+        const pct = q.rate !== null ? Math.round(q.rate * 100) : '-';
+        const color = typeof pct === 'number' ? (pct >= 80 ? 'text-green-600' : pct >= 60 ? 'text-amber-500' : 'text-red-500') : 'text-gray-400';
+        return '<tr class="border-b border-gray-50">' +
+          '<td class="py-1.5">' + q.year + ' 年</td>' +
+          '<td class="py-1.5">第 ' + q.q_no + ' 題</td>' +
+          '<td class="py-1.5 font-bold text-xs">' + q.indicator + '</td>' +
+          '<td class="py-1.5 text-right font-black ' + color + '">' + pct + '%&nbsp;<span class="text-gray-300 font-normal">(' + q.total + '人)</span></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+  document.getElementById('section-hard').classList.remove('hidden');
+
+  // 3. 矩陣
+  const allInds = data.allIndicators;
+  const table = document.getElementById('matrix-table');
+  if (data.studentMatrix.length === 0) {
+    table.innerHTML = '<tr><td class="text-gray-400 p-4">尚無作答資料</td></tr>';
+  } else {
+    const header = '<thead><tr><th class="name-cell">姓名</th>' +
+      allInds.map(ind => '<th>' + ind + '</th>').join('') + '</tr></thead>';
+    const body = '<tbody>' + data.studentMatrix.map(row =>
+      '<tr><td class="name-cell py-1 px-2">' + row.name + '</td>' +
+      allInds.map(ind => {
+        const r = row[ind];
+        const pct = r !== null ? Math.round(r * 100) : null;
+        const cls = cellClass(r);
+        return '<td class="' + cls + '">' + (pct !== null ? pct + '%' : '—') + '</td>';
+      }).join('') + '</tr>'
+    ).join('') + '</tbody>';
+    table.innerHTML = header + body;
+  }
+  document.getElementById('section-matrix').classList.remove('hidden');
+}
+
+function downloadCSV() {
+  if (!dashboardData) return;
+  const allInds = dashboardData.allIndicators;
+  const rows = [['姓名', ...allInds]];
+  dashboardData.studentMatrix.forEach(row => {
+    rows.push([row.name, ...allInds.map(ind => {
+      const r = row[ind];
+      return r !== null ? Math.round(r * 100) + '%' : '';
+    })]);
+  });
+  const csv = '﻿' + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dashboard_' + currentClass + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
