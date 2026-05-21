@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>測驗結果</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+    .rate-bar { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
+    .rate-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    @keyframes pop { 0%{transform:scale(0.8);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    .pop { animation: pop 0.5s ease-out; }
+  </style>
+</head>
+<body class="antialiased flex items-start justify-center p-4 md:p-8">
+
+  <div class="w-full max-w-lg space-y-4">
+    <!-- 得分卡 -->
+    <div class="glass rounded-3xl overflow-hidden">
+      <div id="score-header" class="px-6 py-5 text-white text-center">
+        <div class="text-5xl font-black pop" id="score-display"></div>
+        <div class="text-lg font-bold mt-1 opacity-90" id="score-pct"></div>
+      </div>
+      <div class="px-6 py-3 text-sm text-gray-500 text-center" id="meta-info"></div>
+    </div>
+
+    <!-- 指標分析 -->
+    <div class="glass rounded-3xl p-5">
+      <h3 class="font-black text-gray-800 mb-3">📊 指標分析</h3>
+      <div id="indicator-list" class="space-y-2 text-sm"></div>
+    </div>
+
+    <!-- 操作按鈕 -->
+    <div class="flex gap-3">
+      <button onclick="retryQuiz()"
+        class="flex-1 py-3 rounded-2xl border-2 border-blue-300 text-blue-600 font-black text-sm hover:bg-blue-50 transition">
+        🔁 再練一次
+      </button>
+      <a href="index.html"
+        class="flex-1 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow transition text-center">
+        🏠 回首頁
+      </a>
+    </div>
+
+    <p id="submit-msg" class="text-center text-xs text-gray-400 h-4"></p>
+  </div>
+
+<script>
+const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+
+function init() {
+  const raw = sessionStorage.getItem('quizResult');
+  if (!raw) { window.location.href = 'index.html'; return; }
+  const r = JSON.parse(raw);
+
+  const pct = Math.round(r.score / r.total * 100);
+  const headerEl = document.getElementById('score-header');
+  if (pct >= 80) headerEl.classList.add('bg-green-600');
+  else if (pct >= 60) headerEl.classList.add('bg-amber-500');
+  else headerEl.classList.add('bg-red-500');
+
+  document.getElementById('score-display').textContent = r.score + ' / ' + r.total + ' 題';
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('meta-info').textContent =
+    r.name + '・' + r.class + ' 班・' + r.grade + ' 年級・' + r.condition;
+
+  // 指標統計
+  const indMap = {};
+  r.answers.forEach(a => {
+    const ind = a.indicator || '無指標';
+    if (!indMap[ind]) indMap[ind] = { correct: 0, total: 0 };
+    indMap[ind].total++;
+    if (a.is_correct) indMap[ind].correct++;
+  });
+
+  const sorted = Object.entries(indMap).sort((a, b) => {
+    const ra = a[1].total ? a[1].correct / a[1].total : 0;
+    const rb = b[1].total ? b[1].correct / b[1].total : 0;
+    return ra - rb;
+  });
+
+  const list = document.getElementById('indicator-list');
+  list.innerHTML = sorted.map(([ind, stat]) => {
+    const rate = stat.total ? stat.correct / stat.total : 0;
+    const ratePct = Math.round(rate * 100);
+    const isWeak = ratePct < 80;
+    const fillColor = ratePct >= 80 ? '#22c55e' : ratePct >= 60 ? '#f59e0b' : '#ef4444';
+    return '<div class="flex items-center gap-2 border-b border-gray-50 pb-2">' +
+      '<span class="w-4 flex-shrink-0 font-black ' + (isWeak ? 'text-red-500' : 'text-green-600') + '">' +
+        (isWeak ? '!' : '✓') + '</span>' +
+      '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + ind + '</span>' +
+      '<div class="flex-1 rate-bar"><div class="rate-fill" style="width:' + ratePct + '%;background:' + fillColor + '"></div></div>' +
+      '<span class="text-xs font-bold ml-2 w-20 text-right" style="color:' + fillColor + '">' +
+        stat.correct + '/' + stat.total + ' (' + ratePct + '%)</span>' +
+      '</div>';
+  }).join('');
+
+  submitToGas(r);
+}
+
+async function submitToGas(result) {
+  const msg = document.getElementById('submit-msg');
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(result)
+    });
+    msg.textContent = '✅ 成績已記錄';
+  } catch (e) {
+    msg.textContent = '⚠️ 成績未能儲存（離線模式）';
+  }
+}
+
+function retryQuiz() {
+  const cfgRaw = sessionStorage.getItem('quizConfig');
+  if (cfgRaw) {
+    const config = JSON.parse(cfgRaw);
+    const shuffled = [...config.questions].sort(() => Math.random() - 0.5);
+    config.questions = shuffled;
+    sessionStorage.setItem('quizConfig', JSON.stringify(config));
+  }
+  sessionStorage.removeItem('quizResult');
+  window.location.href = 'quiz.html';
+}
+
+init();
+</script>
+</body>
+</html>
