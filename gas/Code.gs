@@ -88,6 +88,9 @@ function writeRecord(data) {
   ];
 
   var answers = data.answers || [];
+  if (answers.length > 25) {
+    throw new Error('answers length exceeds 25: ' + answers.length);
+  }
   for (var i = 0; i < 25; i++) {
     if (i < answers.length) {
       var a = answers[i];
@@ -128,7 +131,7 @@ function getMyRecord(className, name) {
       indMap[indicator].total++;
       indMap[indicator].correct += correct;
 
-      if (!correct) {
+      if (!correct && r[base] && r[base + 1]) {
         var key = r[base] + '_' + r[base + 1];
         if (!wrongMap[key]) wrongMap[key] = { year: r[base], q_no: r[base + 1], indicator: indicator, count: 0 };
         wrongMap[key].count++;
@@ -138,7 +141,11 @@ function getMyRecord(className, name) {
 
   var indicatorStats = Object.entries(indMap).map(function(kv) {
     return { indicator: kv[0], total: kv[1].total, correct: kv[1].correct };
-  }).sort(function(a, b) { return a.correct / a.total - b.correct / b.total; });
+  }).sort(function(a, b) {
+    var ra = a.total ? a.correct / a.total : 0;
+    var rb = b.total ? b.correct / b.total : 0;
+    return ra - rb;
+  });
 
   var wrongQuestions = Object.values(wrongMap).sort(function(a, b) { return b.count - a.count; });
 
