@@ -50,7 +50,7 @@
       <div id="question-area" class="p-5 slide-in">
         <!-- 圖片 -->
         <div id="img-area" class="hidden mb-4">
-          <img id="q-img" src="" alt="題目圖片" class="max-w-full rounded-xl border border-gray-100 mx-auto block">
+          <img id="q-img" src="" alt="題目圖片" class="w-full rounded-xl border border-gray-100 block cursor-zoom-in" onclick="toggleZoom(this)">
         </div>
 
         <!-- 題幹 -->
@@ -87,6 +87,23 @@
 
 <script>
 const OPT_SYMBOLS = ['①', '②', '③', '④'];
+
+function toggleZoom(img) {
+  if (img.classList.contains('zoomed')) {
+    img.classList.remove('zoomed');
+    img.style.cssText = '';
+    img.style.cursor = 'zoom-in';
+  } else {
+    img.classList.add('zoomed');
+    img.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:96vw;max-width:700px;z-index:999;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.6);cursor:zoom-out';
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const z = document.querySelector('.zoomed');
+    if (z) toggleZoom(z);
+  }
+});
 
 let config = null;
 let current = 0;
