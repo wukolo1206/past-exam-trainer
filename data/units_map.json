@@ -1,0 +1,1104 @@
+{
+  "1": [
+    {
+      "id": "1u-u1-10-以內的數",
+      "title": "10 以內的數",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-1-1"
+      ]
+    },
+    {
+      "id": "1u-u2-比長短",
+      "title": "比長短",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-1-5",
+        "S-1-1",
+        "S-1-2"
+      ]
+    },
+    {
+      "id": "1u-u3-排順序-比多少",
+      "title": "排順序、比多少",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-1-1"
+      ]
+    },
+    {
+      "id": "1u-u4-分與合",
+      "title": "分與合",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "N-1-3"
+      ]
+    },
+    {
+      "id": "1u-u5-方盒-圓罐-球",
+      "title": "方盒、圓罐、球",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "S-1-2"
+      ]
+    },
+    {
+      "id": "1u-u6-30-以內的數",
+      "title": "30 以內的數",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "N-1-1"
+      ]
+    },
+    {
+      "id": "1u-u7-10-以內的加法",
+      "title": "10 以內的加法",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "N-1-3",
+        "R-1-1"
+      ]
+    },
+    {
+      "id": "1u-u8-10-以內的減法",
+      "title": "10 以內的減法",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-1-3",
+        "R-1-1"
+      ]
+    },
+    {
+      "id": "1u-u9-幾點鐘",
+      "title": "幾點鐘",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "N-1-6"
+      ]
+    },
+    {
+      "id": "1d-u1-50-以內的數",
+      "title": "50 以內的數",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-1-1"
+      ]
+    },
+    {
+      "id": "1d-u2-18-以內的加法",
+      "title": "18 以內的加法",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "N-1-3",
+        "R-1-1",
+        "R-1-2"
+      ]
+    },
+    {
+      "id": "1d-u3-圖形與分類",
+      "title": "圖形與分類",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "D-1-1",
+        "S-1-2"
+      ]
+    },
+    {
+      "id": "1d-u4-18-以內的減法",
+      "title": "18 以內的減法",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "N-1-3",
+        "R-1-1"
+      ]
+    },
+    {
+      "id": "1d-u5-有多長",
+      "title": "有多長",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "N-1-5",
+        "S-1-1"
+      ]
+    },
+    {
+      "id": "1d-u6-100-以內的數",
+      "title": "100 以內的數",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "N-1-1"
+      ]
+    },
+    {
+      "id": "1d-u7-認識錢幣",
+      "title": "認識錢幣",
+      "semester": 2,
+      "unit_number": 7,
+      "indicators": [
+        "N-1-4"
+      ]
+    },
+    {
+      "id": "1d-u8-二位數的加減",
+      "title": "二位數的加減",
+      "semester": 2,
+      "unit_number": 8,
+      "indicators": [
+        "N-1-2",
+        "N-1-3",
+        "R-1-1"
+      ]
+    },
+    {
+      "id": "1d-u9-幾月幾日星期幾",
+      "title": "幾月幾日星期幾",
+      "semester": 2,
+      "unit_number": 9,
+      "indicators": [
+        "N-1-6"
+      ]
+    }
+  ],
+  "2": [
+    {
+      "id": "2u-u1-200-以內的數",
+      "title": "200 以內的數",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-2-5",
+        "R-2-1"
+      ]
+    },
+    {
+      "id": "2u-u2-二位數的直式加減",
+      "title": "二位數的直式加減",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-2-2"
+      ]
+    },
+    {
+      "id": "2u-u3-量長度",
+      "title": "量長度",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-2-11",
+        "S-2-3"
+      ]
+    },
+    {
+      "id": "2u-u4-加減關係與應用",
+      "title": "加減關係與應用",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "R-2-4"
+      ]
+    },
+    {
+      "id": "2u-u5-面積的大小比較",
+      "title": "面積的大小比較",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "N-2-12",
+        "S-2-5"
+      ]
+    },
+    {
+      "id": "2u-u6-兩步驟的加減",
+      "title": "兩步驟的加減",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "N-2-8",
+        "R-2-2"
+      ]
+    },
+    {
+      "id": "2u-u7-2-5-4-8-的乘法",
+      "title": "2、5、4、8 的乘法",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "N-2-6",
+        "N-2-7"
+      ]
+    },
+    {
+      "id": "2u-u8-幾時幾分",
+      "title": "幾時幾分",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-2-13"
+      ]
+    },
+    {
+      "id": "2u-u9-3-6-9-7-的乘法",
+      "title": "3、6、9、7 的乘法",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "N-2-6",
+        "N-2-7"
+      ]
+    },
+    {
+      "id": "2u-u10-容量與重量",
+      "title": "容量與重量",
+      "semester": 1,
+      "unit_number": 10,
+      "indicators": [
+        "N-2-12",
+        "R-2-1"
+      ]
+    },
+    {
+      "id": "2d-u1-1000-以內的數",
+      "title": "1000 以內的數",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-2-5",
+        "R-2-1"
+      ]
+    },
+    {
+      "id": "2d-u2-三位數的加減",
+      "title": "三位數的加減",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "R-2-4"
+      ]
+    },
+    {
+      "id": "2d-u3-平面圖形",
+      "title": "平面圖形",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "S-2-1",
+        "S-2-2",
+        "S-2-3",
+        "S-2-4"
+      ]
+    },
+    {
+      "id": "2d-u4-年-月-日",
+      "title": "年、月、日",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "N-2-14"
+      ]
+    },
+    {
+      "id": "2d-u5-乘法",
+      "title": "乘法",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "N-2-6",
+        "N-2-7",
+        "R-2-3"
+      ]
+    },
+    {
+      "id": "2d-u6-兩步驟應用問題",
+      "title": "兩步驟應用問題",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "N-2-8"
+      ]
+    },
+    {
+      "id": "2d-u7-公尺和公分",
+      "title": "公尺和公分",
+      "semester": 2,
+      "unit_number": 7,
+      "indicators": [
+        "N-2-11"
+      ]
+    },
+    {
+      "id": "2d-u8-分類與立體形體",
+      "title": "分類與立體形體",
+      "semester": 2,
+      "unit_number": 8,
+      "indicators": [
+        "D-2-1",
+        "S-2-1",
+        "S-2-2"
+      ]
+    },
+    {
+      "id": "2d-u9-分分看",
+      "title": "分分看",
+      "semester": 2,
+      "unit_number": 9,
+      "indicators": [
+        "N-2-9"
+      ]
+    },
+    {
+      "id": "2d-u10-分數",
+      "title": "分數",
+      "semester": 2,
+      "unit_number": 10,
+      "indicators": [
+        "N-2-10"
+      ]
+    }
+  ],
+  "3": [
+    {
+      "id": "3u-u1-10000以內的數",
+      "title": "10000以內的數",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-3-1",
+        "N-3-11"
+      ]
+    },
+    {
+      "id": "3u-u2-四位數的加減",
+      "title": "四位數的加減",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-3-2",
+        "N-3-8"
+      ]
+    },
+    {
+      "id": "3u-u3-毫米",
+      "title": "毫米",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-3-12"
+      ]
+    },
+    {
+      "id": "3u-u4-乘法",
+      "title": "乘法",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "N-3-3",
+        "N-3-7",
+        "N-3-8"
+      ]
+    },
+    {
+      "id": "3u-u5-角",
+      "title": "角",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "N-3-13",
+        "S-3-1",
+        "S-3-2"
+      ]
+    },
+    {
+      "id": "3u-u6-面積",
+      "title": "面積",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "N-3-14",
+        "S-3-4"
+      ]
+    },
+    {
+      "id": "3u-u7-除法",
+      "title": "除法",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "N-3-4",
+        "N-3-5"
+      ]
+    },
+    {
+      "id": "3u-u8-公升和毫升",
+      "title": "公升和毫升",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-3-15"
+      ]
+    },
+    {
+      "id": "3u-u9-分數",
+      "title": "分數",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "N-3-9"
+      ]
+    },
+    {
+      "id": "3d-u1-分數的加減",
+      "title": "分數的加減",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-3-9",
+        "n-II-10"
+      ]
+    },
+    {
+      "id": "3d-u2-除法",
+      "title": "除法",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "N-3-5",
+        "N-3-7",
+        "n-II-6"
+      ]
+    },
+    {
+      "id": "3d-u3-尋找規律",
+      "title": "尋找規律",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "R-3-1",
+        "R-3-2",
+        "a-II-1"
+      ]
+    },
+    {
+      "id": "3d-u4-公斤和公克",
+      "title": "公斤和公克",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "N-3-16",
+        "m-II-3"
+      ]
+    },
+    {
+      "id": "3d-u5-小數",
+      "title": "小數",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "N-3-10",
+        "N-3-11",
+        "n-II-11",
+        "m-II-2"
+      ]
+    },
+    {
+      "id": "3d-u6-圓",
+      "title": "圓",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "S-3-3",
+        "s-II-4",
+        "s-II-5"
+      ]
+    },
+    {
+      "id": "3d-u7-乘法與除法",
+      "title": "乘法與除法",
+      "semester": 2,
+      "unit_number": 7,
+      "indicators": [
+        "N-3-6",
+        "R-3-1",
+        "a-II-2"
+      ]
+    },
+    {
+      "id": "3d-u8-時間",
+      "title": "時間",
+      "semester": 2,
+      "unit_number": 8,
+      "indicators": [
+        "N-3-17",
+        "m-II-4",
+        "m-II-5"
+      ]
+    },
+    {
+      "id": "3d-u9-統計表",
+      "title": "統計表",
+      "semester": 2,
+      "unit_number": 9,
+      "indicators": [
+        "D-3-1",
+        "d-II-1"
+      ]
+    }
+  ],
+  "4": [
+    {
+      "id": "4u-u1-一億以內的數",
+      "title": "一億以內的數",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-4-1"
+      ]
+    },
+    {
+      "id": "4u-u2-整數的乘法",
+      "title": "整數的乘法",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-4-2"
+      ]
+    },
+    {
+      "id": "4u-u3-角度",
+      "title": "角度",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-4-10",
+        "S-4-1",
+        "S-4-2"
+      ]
+    },
+    {
+      "id": "4u-u4-整數的除法",
+      "title": "整數的除法",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "N-4-2"
+      ]
+    },
+    {
+      "id": "4u-u5-公里",
+      "title": "公里",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "N-4-9"
+      ]
+    },
+    {
+      "id": "4u-u6-三角形",
+      "title": "三角形",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "S-4-2",
+        "S-4-6",
+        "S-4-7"
+      ]
+    },
+    {
+      "id": "4u-u7-小數",
+      "title": "小數",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "N-4-7"
+      ]
+    },
+    {
+      "id": "4u-u8-整數四則計算",
+      "title": "整數四則計算",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-4-3",
+        "R-4-1"
+      ]
+    },
+    {
+      "id": "4u-u9-分數",
+      "title": "分數",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "N-4-5"
+      ]
+    },
+    {
+      "id": "4u-u10-統計圖",
+      "title": "統計圖",
+      "semester": 1,
+      "unit_number": 10,
+      "indicators": [
+        "D-4-1"
+      ]
+    },
+    {
+      "id": "4d-u1-多位數的乘與除",
+      "title": "多位數的乘與除",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-4-2"
+      ]
+    },
+    {
+      "id": "4d-u2-四邊形",
+      "title": "四邊形",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "S-4-2",
+        "S-4-5",
+        "S-4-8"
+      ]
+    },
+    {
+      "id": "4d-u3-概數",
+      "title": "概數",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "N-4-4"
+      ]
+    },
+    {
+      "id": "4d-u4-數量規律",
+      "title": "數量規律",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "R-4-2",
+        "R-4-4"
+      ]
+    },
+    {
+      "id": "4d-u5-小數乘法",
+      "title": "小數乘法",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "N-4-7",
+        "N-4-8"
+      ]
+    },
+    {
+      "id": "4d-u6-周長與面積",
+      "title": "周長與面積",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "N-4-11",
+        "R-4-3",
+        "S-4-3"
+      ]
+    },
+    {
+      "id": "4d-u7-等值分數",
+      "title": "等值分數",
+      "semester": 2,
+      "unit_number": 7,
+      "indicators": [
+        "N-4-6",
+        "N-4-8"
+      ]
+    },
+    {
+      "id": "4d-u8-簡化計算",
+      "title": "簡化計算",
+      "semester": 2,
+      "unit_number": 8,
+      "indicators": [
+        "R-4-1",
+        "R-4-2"
+      ]
+    },
+    {
+      "id": "4d-u9-時間的計算",
+      "title": "時間的計算",
+      "semester": 2,
+      "unit_number": 9,
+      "indicators": [
+        "N-4-12",
+        "N-4-13"
+      ]
+    },
+    {
+      "id": "4d-u10-立方公分",
+      "title": "立方公分",
+      "semester": 2,
+      "unit_number": 10,
+      "indicators": [
+        "N-4-12",
+        "S-4-4"
+      ]
+    }
+  ],
+  "5": [
+    {
+      "id": "5u-u1-多位小數與加減",
+      "title": "多位小數與加減",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-5-1",
+        "N-5-11"
+      ]
+    },
+    {
+      "id": "5u-u2-因數與公因數",
+      "title": "因數與公因數",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-5-3"
+      ]
+    },
+    {
+      "id": "5u-u3-倍數與公倍數",
+      "title": "倍數與公倍數",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-5-3"
+      ]
+    },
+    {
+      "id": "5u-u4-擴分-約分與通分",
+      "title": "擴分、約分與通分",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "N-5-4",
+        "N-5-6"
+      ]
+    },
+    {
+      "id": "5u-u5-多邊形與扇形",
+      "title": "多邊形與扇形",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "S-5-1",
+        "S-5-3"
+      ]
+    },
+    {
+      "id": "5u-u6-異分母分數的加減",
+      "title": "異分母分數的加減",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "N-5-4"
+      ]
+    },
+    {
+      "id": "5u-u7-線對稱圖形",
+      "title": "線對稱圖形",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "S-5-4"
+      ]
+    },
+    {
+      "id": "5u-u8-整數四則運算",
+      "title": "整數四則運算",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-5-2",
+        "R-5-1",
+        "R-5-2"
+      ]
+    },
+    {
+      "id": "5u-u9-面積",
+      "title": "面積",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "S-5-2",
+        "R-5-3"
+      ]
+    },
+    {
+      "id": "5u-u10-柱體-錐體和球",
+      "title": "柱體、錐體和球",
+      "semester": 1,
+      "unit_number": 10,
+      "indicators": [
+        "S-5-6",
+        "S-5-7"
+      ]
+    },
+    {
+      "id": "5d-u1-體積",
+      "title": "體積",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-5-14",
+        "R-5-3",
+        "S-5-5"
+      ]
+    },
+    {
+      "id": "5d-u2-分數的計算",
+      "title": "分數的計算",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "N-5-5",
+        "N-5-7"
+      ]
+    },
+    {
+      "id": "5d-u3-容積",
+      "title": "容積",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "N-5-15"
+      ]
+    },
+    {
+      "id": "5d-u4-小數的乘法",
+      "title": "小數的乘法",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "N-5-8"
+      ]
+    },
+    {
+      "id": "5d-u5-大數與折線圖",
+      "title": "大數與折線圖",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "D-5-1",
+        "N-5-1"
+      ]
+    },
+    {
+      "id": "5d-u6-整數-小數除以整數",
+      "title": "整數、小數除以整數",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "N-5-9",
+        "N-5-11"
+      ]
+    },
+    {
+      "id": "5d-u7-表面積",
+      "title": "表面積",
+      "semester": 2,
+      "unit_number": 7,
+      "indicators": [
+        "S-5-5"
+      ]
+    },
+    {
+      "id": "5d-u8-比率與百分率",
+      "title": "比率與百分率",
+      "semester": 2,
+      "unit_number": 8,
+      "indicators": [
+        "N-5-10"
+      ]
+    },
+    {
+      "id": "5d-u9-時間的乘除",
+      "title": "時間的乘除",
+      "semester": 2,
+      "unit_number": 9,
+      "indicators": [
+        "N-5-16"
+      ]
+    },
+    {
+      "id": "5d-u10-生活中的大單位",
+      "title": "生活中的大單位",
+      "semester": 2,
+      "unit_number": 10,
+      "indicators": [
+        "N-5-12",
+        "N-5-13"
+      ]
+    }
+  ],
+  "6": [
+    {
+      "id": "6u-u1-最大公因數與最小公倍數",
+      "title": "最大公因數與最小公倍數",
+      "semester": 1,
+      "unit_number": 1,
+      "indicators": [
+        "N-6-1",
+        "N-6-2"
+      ]
+    },
+    {
+      "id": "6u-u2-分數除法",
+      "title": "分數除法",
+      "semester": 1,
+      "unit_number": 2,
+      "indicators": [
+        "N-6-2",
+        "N-6-3"
+      ]
+    },
+    {
+      "id": "6u-u3-數量關係",
+      "title": "數量關係",
+      "semester": 1,
+      "unit_number": 3,
+      "indicators": [
+        "N-6-9",
+        "R-6-2",
+        "R-6-3"
+      ]
+    },
+    {
+      "id": "6u-u4-小數除法",
+      "title": "小數除法",
+      "semester": 1,
+      "unit_number": 4,
+      "indicators": [
+        "N-6-4"
+      ]
+    },
+    {
+      "id": "6u-u5-比與比值",
+      "title": "比與比值",
+      "semester": 1,
+      "unit_number": 5,
+      "indicators": [
+        "N-6-6"
+      ]
+    },
+    {
+      "id": "6u-u6-圓周長與扇形周長",
+      "title": "圓周長與扇形周長",
+      "semester": 1,
+      "unit_number": 6,
+      "indicators": [
+        "S-6-3"
+      ]
+    },
+    {
+      "id": "6u-u7-圓面積與扇形面積",
+      "title": "圓面積與扇形面積",
+      "semester": 1,
+      "unit_number": 7,
+      "indicators": [
+        "S-6-3"
+      ]
+    },
+    {
+      "id": "6u-u8-認識速率",
+      "title": "認識速率",
+      "semester": 1,
+      "unit_number": 8,
+      "indicators": [
+        "N-6-7"
+      ]
+    },
+    {
+      "id": "6u-u9-放大圖-縮圖與比例尺",
+      "title": "放大圖、縮圖與比例尺",
+      "semester": 1,
+      "unit_number": 9,
+      "indicators": [
+        "N-6-9",
+        "S-6-1",
+        "S-6-2"
+      ]
+    },
+    {
+      "id": "6d-u1-小數與分數的計算",
+      "title": "小數與分數的計算",
+      "semester": 2,
+      "unit_number": 1,
+      "indicators": [
+        "N-6-2",
+        "N-6-5",
+        "R-6-1"
+      ]
+    },
+    {
+      "id": "6d-u2-速率的應用",
+      "title": "速率的應用",
+      "semester": 2,
+      "unit_number": 2,
+      "indicators": [
+        "N-6-7"
+      ]
+    },
+    {
+      "id": "6d-u3-柱體體積與表面積",
+      "title": "柱體體積與表面積",
+      "semester": 2,
+      "unit_number": 3,
+      "indicators": [
+        "S-6-3",
+        "S-6-4"
+      ]
+    },
+    {
+      "id": "6d-u4-基準量與比較量",
+      "title": "基準量與比較量",
+      "semester": 2,
+      "unit_number": 4,
+      "indicators": [
+        "N-6-8"
+      ]
+    },
+    {
+      "id": "6d-u5-怎樣解題",
+      "title": "怎樣解題",
+      "semester": 2,
+      "unit_number": 5,
+      "indicators": [
+        "N-6-9",
+        "R-6-1",
+        "R-6-2",
+        "R-6-3"
+      ]
+    },
+    {
+      "id": "6d-u6-圓形圖",
+      "title": "圓形圖",
+      "semester": 2,
+      "unit_number": 6,
+      "indicators": [
+        "D-6-1",
+        "D-6-2"
+      ]
+    }
+  ]
+}
