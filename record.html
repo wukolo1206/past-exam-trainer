@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的學習紀錄</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+    .hidden { display: none !important; }
+    .rate-bar { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
+    .rate-fill { height: 100%; border-radius: 4px; }
+  </style>
+</head>
+<body class="antialiased flex items-start justify-center p-4 md:p-8">
+
+  <div class="w-full max-w-lg space-y-4">
+    <div class="flex items-center justify-between mb-2">
+      <h1 class="text-xl font-black text-blue-900">📖 我的學習紀錄</h1>
+      <a href="index.html" class="text-sm text-blue-500 font-bold hover:text-blue-700 transition">← 回首頁</a>
+    </div>
+
+    <!-- 查詢表單 -->
+    <div class="glass rounded-3xl p-5 space-y-3">
+      <div class="flex gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">班級</label>
+          <select id="q-class"
+            class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-sm">
+            <option value="">班級</option>
+            <option value="301">301</option>
+            <option value="302">302</option>
+            <option value="303">303</option>
+            <option value="304">304</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-bold text-gray-500 mb-1">姓名</label>
+          <input type="text" id="q-name" placeholder="輸入姓名"
+            class="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-sm">
+        </div>
+      </div>
+      <button onclick="loadRecord()"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 rounded-xl transition">
+        🔍 查詢我的紀錄
+      </button>
+    </div>
+
+    <div id="loading" class="hidden text-center text-gray-400 py-8 font-bold">載入中...</div>
+
+    <div id="result-area" class="hidden space-y-4"></div>
+  </div>
+
+<script>
+const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+
+async function loadRecord() {
+  const cls = document.getElementById('q-class').value;
+  const name = document.getElementById('q-name').value.trim();
+  if (!cls || !name) { alert('請選擇班級並輸入姓名'); return; }
+
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('result-area').classList.add('hidden');
+  document.getElementById('result-area').innerHTML = '';
+
+  try {
+    const res = await fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name));
+    const data = await res.json();
+    renderRecord(data);
+  } catch (e) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('result-area').innerHTML =
+      '<div class="glass rounded-2xl p-5 text-center text-red-500 font-bold">載入失敗，請確認網路連線</div>';
+    document.getElementById('result-area').classList.remove('hidden');
+  }
+}
+
+function renderRecord(data) {
+  document.getElementById('loading').classList.add('hidden');
+  const area = document.getElementById('result-area');
+  area.innerHTML = '';
+
+  // 作答歷史
+  let histHTML;
+  if (!data.history || data.history.length === 0) {
+    histHTML = '<p class="text-gray-400 text-sm text-center py-4">尚無作答紀錄</p>';
+  } else {
+    histHTML = '<div class="overflow-x-auto"><table class="w-full text-xs">' +
+      '<thead><tr class="text-gray-400 border-b">' +
+        '<th class="text-left pb-2 pr-2">日期</th>' +
+        '<th class="text-left pb-2 pr-2">出題條件</th>' +
+        '<th class="text-right pb-2">得分</th>' +
+      '</tr></thead><tbody>' +
+      data.history.slice(0, 20).map(h => {
+        const dateStr = h.timestamp ? String(h.timestamp).slice(0, 10) : '—';
+        const pct = h.total ? Math.round(h.score / h.total * 100) : 0;
+        const scoreColor = pct >= 80 ? 'text-green-600' : 'text-red-500';
+        return '<tr class="border-b border-gray-50">' +
+          '<td class="py-1.5 pr-2 text-gray-500">' + dateStr + '</td>' +
+          '<td class="py-1.5 pr-2 font-bold">' + (h.condition || h.mode || '—') + '</td>' +
+          '<td class="py-1.5 text-right font-black ' + scoreColor + '">' + h.score + '/' + h.total + '</td>' +
+          '</tr>';
+      }).join('') +
+      '</tbody></table></div>';
+  }
+  area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-3">📋 作答歷史</h3>' + histHTML + '</div>';
+
+  // 指標累計
+  if (data.indicatorStats && data.indicatorStats.length > 0) {
+    const barsHTML = data.indicatorStats.map(stat => {
+      const rate = stat.total ? stat.correct / stat.total : 0;
+      const pct = Math.round(rate * 100);
+      const color = pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+      const isWeak = pct < 80;
+      return '<div class="flex items-center gap-2 text-sm border-b border-gray-50 pb-1.5">' +
+        '<span class="w-4 flex-shrink-0 font-black ' + (isWeak ? 'text-red-500' : 'text-green-600') + '">' + (isWeak ? '!' : '✓') + '</span>' +
+        '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + stat.indicator + '</span>' +
+        '<div class="flex-1 rate-bar"><div class="rate-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+        '<span class="text-xs font-bold ml-2 w-20 text-right" style="color:' + color + '">' + stat.correct + '/' + stat.total + ' (' + pct + '%)</span>' +
+        '</div>';
+    }).join('');
+    area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-3">📊 指標累計答對率</h3><div class="space-y-1.5">' + barsHTML + '</div></div>';
+  }
+
+  // 答錯題目
+  if (data.wrongQuestions && data.wrongQuestions.length > 0) {
+    const wrongHTML = data.wrongQuestions.slice(0, 10).map(q =>
+      '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm flex items-center justify-between">' +
+        '<div><span class="font-black text-red-500 text-xs">' + q.indicator + '</span>' +
+          ' <span class="text-gray-600">' + q.year + '年・第 ' + q.q_no + ' 題</span></div>' +
+        '<span class="text-gray-400 text-xs font-bold">答錯 ' + q.count + ' 次</span>' +
+      '</div>'
+    ).join('');
+    area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-1">❌ 常答錯的題目</h3><p class="text-xs text-gray-400 mb-3">跨多次練習統計</p><div class="space-y-2">' + wrongHTML + '</div></div>';
+  }
+
+  area.classList.remove('hidden');
+}
+</script>
+</body>
+</html>
