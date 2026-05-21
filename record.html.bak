@@ -66,17 +66,9 @@ async function loadRecord() {
   document.getElementById('result-area').innerHTML = '';
 
   try {
-    const [res, qRes] = await Promise.all([
-      fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name)),
-      fetch('data/questions.json')
-    ]);
+    const res = await fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name));
     const data = await res.json();
-    let qMap = new Map();
-    try {
-      const qArr = await qRes.json();
-      qArr.forEach(function(q) { qMap.set(q.year + '_' + q.q_no, q); });
-    } catch (e2) { /* questions.json 載入失敗，忽略 */ }
-    renderRecord(data, qMap);
+    renderRecord(data);
   } catch (e) {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('result-area').innerHTML =
@@ -85,8 +77,7 @@ async function loadRecord() {
   }
 }
 
-function renderRecord(data, qMap) {
-  if (!qMap) qMap = new Map();
+function renderRecord(data) {
   document.getElementById('loading').classList.add('hidden');
   const area = document.getElementById('result-area');
   area.innerHTML = '';
@@ -133,60 +124,19 @@ function renderRecord(data, qMap) {
     area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-3">📊 指標累計答對率</h3><div class="space-y-1.5">' + barsHTML + '</div></div>';
   }
 
-  // 答錯題目（可折疊）
+  // 答錯題目
   if (data.wrongQuestions && data.wrongQuestions.length > 0) {
-    const optionLabels = ['①', '②', '③', '④'];
-    const wrongHTML = data.wrongQuestions.slice(0, 10).map(function(wq) {
-      const key = wq.year + '_' + wq.q_no;
-      const found = qMap.get(key);
-      let stemRow = '';
-      if (found) {
-        const ansText = found.options ? found.options[String(found.answer)] : '';
-        const ansLabel = optionLabels[(found.answer || 1) - 1] || '';
-        stemRow =
-          '<div class="mt-2 text-xs text-gray-600 bg-white rounded-lg px-3 py-2 border border-red-100">' +
-            '<div class="mb-1"><span class="text-gray-400">題幹：</span>' + (found.stem || '—') + '</div>' +
-            '<div><span class="text-gray-400">正確答案：</span><span class="font-bold text-blue-700">' + ansLabel + ' ' + (ansText || '—') + '</span></div>' +
-          '</div>';
-      }
-      return '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm">' +
-        '<div class="flex items-center justify-between">' +
-          '<div><span class="font-black text-red-500 text-xs">' + wq.indicator + '</span>' +
-            ' <span class="text-gray-600">' + wq.year + '年・第 ' + wq.q_no + ' 題</span></div>' +
-          '<span class="text-gray-400 text-xs font-bold">答錯 ' + wq.count + ' 次</span>' +
-        '</div>' +
-        stemRow +
-      '</div>';
-    }).join('');
-
-    const sectionId = 'wrong-list-' + Date.now();
-    area.innerHTML +=
-      '<div class="glass rounded-2xl p-5">' +
-        '<div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleWrongList(\'' + sectionId + '\', this)">' +
-          '<div>' +
-            '<h3 class="font-black text-gray-800 inline">❌ 常答錯的題目</h3>' +
-            '<span class="text-xs text-gray-400 ml-2">跨多次練習統計</span>' +
-          '</div>' +
-          '<span class="text-gray-500 font-bold text-sm toggle-arrow">▼</span>' +
-        '</div>' +
-        '<div id="' + sectionId + '" class="space-y-2 mt-3">' + wrongHTML + '</div>' +
-      '</div>';
+    const wrongHTML = data.wrongQuestions.slice(0, 10).map(q =>
+      '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm flex items-center justify-between">' +
+        '<div><span class="font-black text-red-500 text-xs">' + q.indicator + '</span>' +
+          ' <span class="text-gray-600">' + q.year + '年・第 ' + q.q_no + ' 題</span></div>' +
+        '<span class="text-gray-400 text-xs font-bold">答錯 ' + q.count + ' 次</span>' +
+      '</div>'
+    ).join('');
+    area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-1">❌ 常答錯的題目</h3><p class="text-xs text-gray-400 mb-3">跨多次練習統計</p><div class="space-y-2">' + wrongHTML + '</div></div>';
   }
 
   area.classList.remove('hidden');
-}
-
-function toggleWrongList(sectionId, headerEl) {
-  const list = document.getElementById(sectionId);
-  const arrow = headerEl.querySelector('.toggle-arrow');
-  if (!list) return;
-  if (list.style.display === 'none') {
-    list.style.display = '';
-    if (arrow) arrow.textContent = '▼';
-  } else {
-    list.style.display = 'none';
-    if (arrow) arrow.textContent = '▶';
-  }
 }
 </script>
 </body>
