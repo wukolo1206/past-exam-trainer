@@ -56,6 +56,10 @@
 <script>
 const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
 
+function esc(s) {
+  return String(s ?? '—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 async function loadRecord() {
   const cls = document.getElementById('q-class').value;
   const name = document.getElementById('q-name').value.trim();
@@ -70,7 +74,9 @@ async function loadRecord() {
       fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name)),
       fetch('data/questions.json')
     ]);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    if (data.error) throw new Error(data.error);
     let qMap = new Map();
     try {
       const qArr = await qRes.json();
@@ -107,8 +113,8 @@ function renderRecord(data, qMap) {
         const pct = h.total ? Math.round(h.score / h.total * 100) : 0;
         const scoreColor = pct >= 80 ? 'text-green-600' : 'text-red-500';
         return '<tr class="border-b border-gray-50">' +
-          '<td class="py-1.5 pr-2 text-gray-500">' + dateStr + '</td>' +
-          '<td class="py-1.5 pr-2 font-bold">' + (h.condition || h.mode || '—') + '</td>' +
+          '<td class="py-1.5 pr-2 text-gray-500">' + esc(dateStr) + '</td>' +
+          '<td class="py-1.5 pr-2 font-bold">' + esc(h.condition || h.mode) + '</td>' +
           '<td class="py-1.5 text-right font-black ' + scoreColor + '">' + h.score + '/' + h.total + '</td>' +
           '</tr>';
       }).join('') +
@@ -125,7 +131,7 @@ function renderRecord(data, qMap) {
       const isWeak = pct < 80;
       return '<div class="flex items-center gap-2 text-sm border-b border-gray-50 pb-1.5">' +
         '<span class="w-4 flex-shrink-0 font-black ' + (isWeak ? 'text-red-500' : 'text-green-600') + '">' + (isWeak ? '!' : '✓') + '</span>' +
-        '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + stat.indicator + '</span>' +
+        '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + esc(stat.indicator) + '</span>' +
         '<div class="flex-1 rate-bar"><div class="rate-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
         '<span class="text-xs font-bold ml-2 w-20 text-right" style="color:' + color + '">' + stat.correct + '/' + stat.total + ' (' + pct + '%)</span>' +
         '</div>';
@@ -145,15 +151,15 @@ function renderRecord(data, qMap) {
         const ansLabel = optionLabels[(found.answer || 1) - 1] || '';
         stemRow =
           '<div class="mt-2 text-xs text-gray-600 bg-white rounded-lg px-3 py-2 border border-red-100">' +
-            '<div class="mb-1"><span class="text-gray-400">題幹：</span>' + (found.stem || '—') + '</div>' +
-            '<div><span class="text-gray-400">正確答案：</span><span class="font-bold text-blue-700">' + ansLabel + ' ' + (ansText || '—') + '</span></div>' +
+            '<div class="mb-1"><span class="text-gray-400">題幹：</span>' + esc(found.stem) + '</div>' +
+            '<div><span class="text-gray-400">正確答案：</span><span class="font-bold text-blue-700">' + esc(ansLabel) + ' ' + esc(ansText) + '</span></div>' +
           '</div>';
       }
       return '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm">' +
         '<div class="flex items-center justify-between">' +
-          '<div><span class="font-black text-red-500 text-xs">' + wq.indicator + '</span>' +
-            ' <span class="text-gray-600">' + wq.year + '年・第 ' + wq.q_no + ' 題</span></div>' +
-          '<span class="text-gray-400 text-xs font-bold">答錯 ' + wq.count + ' 次</span>' +
+          '<div><span class="font-black text-red-500 text-xs">' + esc(wq.indicator) + '</span>' +
+            ' <span class="text-gray-600">' + esc(wq.year) + '年・第 ' + esc(wq.q_no) + ' 題</span></div>' +
+          '<span class="text-gray-400 text-xs font-bold">答錯 ' + esc(wq.count) + ' 次</span>' +
         '</div>' +
         stemRow +
       '</div>';

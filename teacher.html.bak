@@ -17,8 +17,7 @@
     .matrix-table { font-size: 0.72rem; border-collapse: collapse; white-space: nowrap; }
     .matrix-table th { background: #f0f9ff; padding: 0.3em 0.5em; font-weight: 700; color: #0284c7; border: 1px solid #bae6fd; }
     .matrix-table td { padding: 0.3em 0.5em; border: 1px solid #e5e7eb; text-align: center; }
-    .matrix-table td.name-cell { text-align: left; font-weight: 700; color: #374151; position: sticky; left: 0; z-index: 1; background: #f0f9ff; }
-    .matrix-table th.name-cell { position: sticky; left: 0; z-index: 2; }
+    .matrix-table td.name-cell { text-align: left; font-weight: 700; color: #374151; }
   </style>
 </head>
 <body class="antialiased p-4 md:p-8">
@@ -74,10 +73,6 @@ const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
 let dashboardData = null;
 let currentClass = '';
 
-function escapeHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 async function loadDashboard() {
   const cls = document.getElementById('t-class').value;
   if (!cls) { alert('請選擇班級'); return; }
@@ -105,18 +100,13 @@ function cellClass(rate) {
 }
 
 function renderDashboard(data) {
-  if (!data || !data.indicatorHeatmap || !data.hardestQuestions || !data.allIndicators || !data.studentMatrix) {
-    alert('資料格式錯誤，請確認 GAS 回傳正確');
-    return;
-  }
-
   // 1. 指標熱圖
   const hmList = document.getElementById('heatmap-list');
   hmList.innerHTML = data.indicatorHeatmap.map(item => {
     const pct = item.rate !== null ? Math.round(item.rate * 100) : null;
     const color = pct === null ? '#9ca3af' : pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
     return '<div class="flex items-center gap-2 text-sm">' +
-      '<span class="font-black w-16 flex-shrink-0 text-xs text-gray-700">' + escapeHtml(item.indicator) + '</span>' +
+      '<span class="font-black w-16 flex-shrink-0 text-xs text-gray-700">' + item.indicator + '</span>' +
       '<div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><div style="width:' + (pct||0) + '%;background:' + color + ';height:100%;border-radius:4px"></div></div>' +
       '<span class="text-xs font-bold w-12 text-right" style="color:' + color + '">' + (pct !== null ? pct + '%' : '-') + '</span>' +
       '</div>';
@@ -134,10 +124,10 @@ function renderDashboard(data) {
         const pct = q.rate !== null ? Math.round(q.rate * 100) : '-';
         const color = typeof pct === 'number' ? (pct >= 80 ? 'text-green-600' : pct >= 60 ? 'text-amber-500' : 'text-red-500') : 'text-gray-400';
         return '<tr class="border-b border-gray-50">' +
-          '<td class="py-1.5">' + escapeHtml(q.year) + ' 年</td>' +
-          '<td class="py-1.5">第 ' + escapeHtml(q.q_no) + ' 題</td>' +
-          '<td class="py-1.5 font-bold text-xs">' + escapeHtml(q.indicator) + '</td>' +
-          '<td class="py-1.5 text-right font-black ' + color + '">' + (typeof pct === 'number' ? pct + '%' : '—') + '&nbsp;<span class="text-gray-300 font-normal">(' + escapeHtml(q.total) + '人)</span></td>' +
+          '<td class="py-1.5">' + q.year + ' 年</td>' +
+          '<td class="py-1.5">第 ' + q.q_no + ' 題</td>' +
+          '<td class="py-1.5 font-bold text-xs">' + q.indicator + '</td>' +
+          '<td class="py-1.5 text-right font-black ' + color + '">' + pct + '%&nbsp;<span class="text-gray-300 font-normal">(' + q.total + '人)</span></td>' +
           '</tr>';
       }).join('') + '</tbody></table>';
   }
@@ -150,9 +140,9 @@ function renderDashboard(data) {
     table.innerHTML = '<tr><td class="text-gray-400 p-4">尚無作答資料</td></tr>';
   } else {
     const header = '<thead><tr><th class="name-cell">姓名</th>' +
-      allInds.map(ind => '<th>' + escapeHtml(ind) + '</th>').join('') + '</tr></thead>';
+      allInds.map(ind => '<th>' + ind + '</th>').join('') + '</tr></thead>';
     const body = '<tbody>' + data.studentMatrix.map(row =>
-      '<tr><td class="name-cell py-1 px-2">' + escapeHtml(row.name) + '</td>' +
+      '<tr><td class="name-cell py-1 px-2">' + row.name + '</td>' +
       allInds.map(ind => {
         const r = row[ind];
         const pct = r !== null ? Math.round(r * 100) : null;
@@ -181,7 +171,6 @@ function downloadCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = 'dashboard_' + currentClass + '_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
-  URL.revokeObjectURL(a.href);
 }
 </script>
 </body>
