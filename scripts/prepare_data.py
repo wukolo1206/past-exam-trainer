@@ -1,7 +1,7 @@
 """
 prepare_data.py
 從 knowledge-map 複製 exam_questions.json，並從 units.json 建立 units_map.json。
-執行：python scripts/prepare_data.py（從 past-exam-trainer/ 目錄執行）
+執行：python scripts/prepare_data.py（可從任意目錄執行）
 """
 import json, shutil, os
 
@@ -16,6 +16,9 @@ src = os.path.join(KM_DIR, 'exam_questions.json')
 dst = os.path.join(OUT_DIR, 'questions.json')
 shutil.copy2(src, dst)
 print(f'Copied questions.json ({os.path.getsize(dst):,} bytes)')
+# NOTE: image_path field is blank in source data for all image-bearing questions.
+# Frontend derives image path at runtime: img/{year}_{grade}_q{q_no}.png
+# See quiz.html: const imgPath = 'img/' + q.year + '_' + q.grade + '_q' + q.q_no + '.png';
 
 # 2. 建立 units_map.json：grade → [{ id, title, indicators: [code] }]
 with open(os.path.join(KM_DIR, 'units.json'), encoding='utf-8') as f:
@@ -37,6 +40,9 @@ for u in units:
 # 每年級依學期、單元號排序
 for g in units_map:
     units_map[g].sort(key=lambda x: (x['semester'], x['unit_number']))
+
+# Only include grades that have questions in exam data
+units_map = {g: v for g, v in units_map.items() if g in {'3', '4', '5', '6'}}
 
 with open(os.path.join(OUT_DIR, 'units_map.json'), 'w', encoding='utf-8') as f:
     json.dump(units_map, f, ensure_ascii=False, indent=2)
