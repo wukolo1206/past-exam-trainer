@@ -1,5 +1,5 @@
 // 修改這裡填入你的 Sheets ID
-var SHEET_ID = 'YOUR_GOOGLE_SHEETS_ID';
+var SHEET_ID = '1Ol2HGyu5I3Q6lq9VvIEoAiq-swgohYfX-f2uA91PiwY';
 
 var RECORD_SHEET = '答題紀錄';
 var STUDENT_SHEET = '學生名單';
