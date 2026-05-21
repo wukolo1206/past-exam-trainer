@@ -7,138 +7,200 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); min-height: 100vh; }
-    .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
-    .tab-btn { transition: all 0.15s; }
-    .tab-btn.active { background: #2563eb; color: white; font-weight: 800; }
-    .grade-btn { transition: all 0.15s; }
-    .grade-btn.active { background: #1d4ed8; color: white; font-weight: 800; }
-    .count-btn { transition: all 0.15s; }
-    .count-btn.active { border-color: #2563eb; background: #eff6ff; color: #1e40af; font-weight: 800; }
+    body { font-family: 'Noto Sans TC', sans-serif; background: #f0f4ff; min-height: 100vh; }
     .hidden { display: none !important; }
-    select { cursor: pointer; }
-    option:disabled { color: #9ca3af; }
+
+    /* 年級大按鈕 */
+    .grade-btn {
+      transition: all 0.15s;
+      border: 3px solid #e5e7eb;
+      background: white;
+    }
+    .grade-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .grade-btn.active { border-color: transparent; color: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
+    .grade-btn[data-g="3"].active { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .grade-btn[data-g="4"].active { background: linear-gradient(135deg, #10b981, #047857); }
+    .grade-btn[data-g="5"].active { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .grade-btn[data-g="6"].active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+    /* 出題方式按鈕 */
+    .mode-btn {
+      transition: all 0.15s;
+      border: 2px solid #e5e7eb;
+      background: white;
+    }
+    .mode-btn:hover { border-color: #93c5fd; background: #eff6ff; }
+    .mode-btn.active { border-color: #2563eb; background: #eff6ff; }
+    .mode-btn.active .mode-icon { background: #2563eb; color: white; }
+
+    /* 題數按鈕 */
+    .count-btn {
+      transition: all 0.15s;
+      border: 2px solid #e5e7eb;
+      background: white;
+    }
+    .count-btn:hover { border-color: #93c5fd; }
+    .count-btn.active { border-color: #2563eb; background: #2563eb; color: white; font-weight: 800; }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+    }
   </style>
 </head>
-<body class="antialiased flex items-start justify-center p-4 md:p-8">
+<body class="flex flex-col items-center px-4 py-6 md:py-10">
 
-  <div class="w-full max-w-lg">
-    <!-- Header -->
-    <div class="text-center mb-6">
-      <div class="text-5xl mb-2">📐</div>
-      <h1 class="text-2xl font-black text-blue-900">學力檢測考古題練習</h1>
-      <p class="text-sm text-gray-500 mt-1">選好條件，開始練習！</p>
+  <div class="w-full max-w-md space-y-4">
+
+    <!-- 標題 -->
+    <div class="text-center mb-2">
+      <div class="text-4xl mb-1">🏆</div>
+      <h1 class="text-2xl font-black text-gray-800">學力檢測練習</h1>
+      <p class="text-gray-500 text-sm mt-0.5">考古題刷題，掌握每個指標</p>
     </div>
 
-    <div class="glass rounded-3xl overflow-hidden">
-      <div class="bg-blue-600 px-6 py-4 text-white">
-        <h2 class="font-black text-lg">出題設定</h2>
+    <!-- Step 1：我是誰 -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">1</span>
+        <span class="font-black text-gray-700">我是誰？</span>
       </div>
-
-      <div class="p-6 space-y-5">
-
-        <!-- 班級 -->
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-1">班級</label>
+      <div class="flex gap-3">
+        <div class="w-28 flex-shrink-0">
           <select id="sel-class" onchange="onClassChange()"
-            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none text-lg font-bold">
-            <option value="">-- 請選擇班級 --</option>
-            <option value="301">301 班</option>
-            <option value="302">302 班</option>
-            <option value="303">303 班</option>
-            <option value="304">304 班</option>
+            class="w-full px-3 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+            <option value="">班級</option>
+            <option value="301">301</option>
+            <option value="302">302</option>
+            <option value="303">303</option>
+            <option value="304">304</option>
           </select>
         </div>
-
-        <!-- 姓名 -->
-        <div id="name-area">
-          <label class="block text-sm font-bold text-gray-700 mb-1">姓名</label>
+        <div class="flex-1" id="name-area">
           <select id="sel-name"
-            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none text-lg font-bold">
-            <option value="">-- 請先選擇班級 --</option>
+            class="w-full px-3 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+            <option value="">請先選班級</option>
           </select>
-        </div>
-
-        <!-- 年級 -->
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-2">年級</label>
-          <div class="flex gap-2">
-            <button onclick="setGrade(3)" class="grade-btn flex-1 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">三年級</button>
-            <button onclick="setGrade(4)" class="grade-btn flex-1 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">四年級</button>
-            <button onclick="setGrade(5)" class="grade-btn flex-1 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">五年級</button>
-            <button onclick="setGrade(6)" class="grade-btn flex-1 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">六年級</button>
-          </div>
-        </div>
-
-        <!-- 出題方式 -->
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-2">出題方式</label>
-          <div class="flex gap-1 bg-gray-100 rounded-xl p-1">
-            <button onclick="setMode('year', this)"  class="tab-btn flex-1 py-2 rounded-lg text-sm font-bold text-gray-600 transition">按年份</button>
-            <button onclick="setMode('unit', this)"  class="tab-btn flex-1 py-2 rounded-lg text-sm font-bold text-gray-600 transition">按單元</button>
-            <button onclick="setMode('indicator', this)" class="tab-btn flex-1 py-2 rounded-lg text-sm font-bold text-gray-600 transition">按指標</button>
-          </div>
-
-          <!-- 年份子選單 -->
-          <div id="panel-year" class="hidden mt-3">
-            <select id="sel-year" onchange="updatePoolHint()"
-              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold">
-              <option value="">-- 選擇年份 --</option>
-              <option value="114">114 學年</option>
-              <option value="113">113 學年</option>
-              <option value="112">112 學年</option>
-              <option value="111">111 學年</option>
-              <option value="110">110 學年</option>
-              <option value="109">109 學年</option>
-              <option value="108">108 學年</option>
-              <option value="106">106 學年</option>
-            </select>
-          </div>
-
-          <!-- 單元子選單 -->
-          <div id="panel-unit" class="hidden mt-3">
-            <select id="sel-unit" onchange="updatePoolHint()"
-              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold">
-              <option value="">-- 選擇單元 --</option>
-            </select>
-          </div>
-
-          <!-- 指標子選單 -->
-          <div id="panel-indicator" class="hidden mt-3">
-            <select id="sel-indicator" onchange="updatePoolHint()"
-              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold">
-              <option value="">-- 選擇指標 --</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- 題數 -->
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-1">
-            題數 <span id="pool-hint" class="text-gray-400 font-normal text-xs ml-1"></span>
-          </label>
-          <div class="flex gap-2 flex-wrap">
-            <button onclick="setCount(5,this)"  class="count-btn px-4 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">5 題</button>
-            <button onclick="setCount(10,this)" class="count-btn active px-4 py-2.5 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-800 font-black text-sm transition">10 題</button>
-            <button onclick="setCount(15,this)" class="count-btn px-4 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">15 題</button>
-            <button onclick="setCount(20,this)" class="count-btn px-4 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">20 題</button>
-            <button onclick="setCount(0,this)"  class="count-btn px-4 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm transition">全部</button>
-          </div>
-        </div>
-
-        <p id="err-msg" class="text-red-500 text-sm hidden"></p>
-
-        <button onclick="startQuiz()"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xl py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
-          🚀 開始練習
-        </button>
-
-        <div class="flex gap-2 pt-1 border-t border-gray-100">
-          <a href="teacher.html" class="flex-1 text-center text-sm text-blue-500 hover:text-blue-700 font-bold py-1 transition">👨‍🏫 教師 Dashboard</a>
-          <a href="record.html" class="flex-1 text-center text-sm text-indigo-500 hover:text-indigo-700 font-bold py-1 transition">📖 我的錯題查詢</a>
         </div>
       </div>
     </div>
+
+    <!-- Step 2：年級 -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">2</span>
+        <span class="font-black text-gray-700">幾年級的題目？</span>
+      </div>
+      <div class="grid grid-cols-4 gap-2">
+        <button onclick="setGrade(3,this)" data-g="3"
+          class="grade-btn rounded-xl py-4 flex flex-col items-center gap-1">
+          <span class="text-2xl">🦋</span>
+          <span class="text-sm font-black text-gray-700">三年級</span>
+        </button>
+        <button onclick="setGrade(4,this)" data-g="4"
+          class="grade-btn rounded-xl py-4 flex flex-col items-center gap-1">
+          <span class="text-2xl">🌿</span>
+          <span class="text-sm font-black text-gray-700">四年級</span>
+        </button>
+        <button onclick="setGrade(5,this)" data-g="5"
+          class="grade-btn rounded-xl py-4 flex flex-col items-center gap-1">
+          <span class="text-2xl">⭐</span>
+          <span class="text-sm font-black text-gray-700">五年級</span>
+        </button>
+        <button onclick="setGrade(6,this)" data-g="6"
+          class="grade-btn rounded-xl py-4 flex flex-col items-center gap-1">
+          <span class="text-2xl">🚀</span>
+          <span class="text-sm font-black text-gray-700">六年級</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3：出題方式 -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">3</span>
+        <span class="font-black text-gray-700">怎麼出題？</span>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        <button onclick="setMode('year',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
+          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📅</span>
+          <span class="text-xs font-black text-gray-700">按年份</span>
+        </button>
+        <button onclick="setMode('unit',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
+          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📚</span>
+          <span class="text-xs font-black text-gray-700">按單元</span>
+        </button>
+        <button onclick="setMode('indicator',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
+          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">🎯</span>
+          <span class="text-xs font-black text-gray-700">按指標</span>
+        </button>
+      </div>
+
+      <!-- 子選單 -->
+      <div id="panel-year" class="hidden">
+        <select id="sel-year" onchange="updatePoolHint()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+          <option value="">選擇年份</option>
+          <option value="114">114 學年</option>
+          <option value="113">113 學年</option>
+          <option value="112">112 學年</option>
+          <option value="111">111 學年</option>
+          <option value="110">110 學年</option>
+          <option value="109">109 學年</option>
+          <option value="108">108 學年</option>
+          <option value="106">106 學年</option>
+        </select>
+      </div>
+      <div id="panel-unit" class="hidden">
+        <select id="sel-unit" onchange="updatePoolHint()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+          <option value="">選擇單元</option>
+        </select>
+      </div>
+      <div id="panel-indicator" class="hidden">
+        <select id="sel-indicator" onchange="updatePoolHint()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+          <option value="">選擇指標</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Step 4：題數 -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">4</span>
+          <span class="font-black text-gray-700">幾題？</span>
+        </div>
+        <span id="pool-hint" class="text-xs text-gray-400 font-bold"></span>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="setCount(5,this)"  class="count-btn flex-1 py-3 rounded-xl font-bold text-gray-700 text-sm">5</button>
+        <button onclick="setCount(10,this)" class="count-btn active flex-1 py-3 rounded-xl font-bold text-sm">10</button>
+        <button onclick="setCount(15,this)" class="count-btn flex-1 py-3 rounded-xl font-bold text-gray-700 text-sm">15</button>
+        <button onclick="setCount(20,this)" class="count-btn flex-1 py-3 rounded-xl font-bold text-gray-700 text-sm">20</button>
+        <button onclick="setCount(0,this)"  class="count-btn flex-1 py-3 rounded-xl font-bold text-gray-700 text-sm">全部</button>
+      </div>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <p id="err-msg" class="hidden text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl py-2 px-4"></p>
+
+    <!-- 開始按鈕 -->
+    <button onclick="startQuiz()"
+      class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-xl py-5 rounded-2xl shadow-lg transition-all">
+      開始練習 →
+    </button>
+
+    <!-- 底部連結 -->
+    <div class="flex gap-3 pb-4">
+      <a href="record.html" class="flex-1 text-center text-sm text-gray-500 hover:text-blue-600 font-bold py-2 bg-white rounded-xl shadow-sm transition">📖 我的練習紀錄</a>
+      <a href="teacher.html" class="flex-1 text-center text-sm text-gray-500 hover:text-blue-600 font-bold py-2 bg-white rounded-xl shadow-sm transition">👨‍🏫 教師後台</a>
+    </div>
+
   </div>
 
 <script>
@@ -166,51 +228,46 @@ async function onClassChange() {
   const cls = document.getElementById('sel-class').value;
   const nameArea = document.getElementById('name-area');
   const sel = document.getElementById('sel-name');
-
-  // Remove any previously added text input
   const existingInput = document.getElementById('input-name');
   if (existingInput) existingInput.remove();
 
   if (!cls) {
-    sel.innerHTML = '<option value="">-- 請先選擇班級 --</option>';
+    sel.innerHTML = '<option value="">請先選班級</option>';
     sel.classList.remove('hidden');
     return;
   }
-
   sel.innerHTML = '<option value="">載入中...</option>';
   try {
     const res = await fetch(GAS_URL + '?action=students&class=' + cls);
     const data = await res.json();
     if (data.students && data.students.length > 0) {
-      sel.innerHTML = '<option value="">-- 請選擇姓名 --</option>' +
-        data.students.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+      sel.innerHTML = '<option value="">選擇姓名</option>' +
+        data.students.map(s => '<option value="' + s.name + '">' + s.name + '</option>').join('');
       sel.classList.remove('hidden');
     } else {
       sel.classList.add('hidden');
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = 'input-name';
-      input.placeholder = '輸入姓名';
-      input.className = 'w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none text-lg font-bold';
-      nameArea.appendChild(input);
+      appendNameInput(nameArea);
     }
   } catch(e) {
     sel.classList.add('hidden');
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'input-name';
-    input.placeholder = '輸入姓名';
-    input.className = 'w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none text-lg font-bold';
-    nameArea.appendChild(input);
+    appendNameInput(nameArea);
   }
 }
 
-function setGrade(g) {
+function appendNameInput(nameArea) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'input-name';
+  input.placeholder = '輸入姓名';
+  input.className = 'w-full px-3 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700';
+  nameArea.appendChild(input);
+}
+
+function setGrade(g, btn) {
   if (!dataReady) { showError('資料載入中，請稍候'); return; }
   selectedGrade = g;
-  document.querySelectorAll('.grade-btn').forEach((b, i) => {
-    b.classList.toggle('active', i === g - 3);
-  });
+  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   buildUnitSelect(g);
   buildIndicatorSelect(g);
   updatePoolHint();
@@ -219,8 +276,8 @@ function setGrade(g) {
 function buildUnitSelect(grade) {
   const sel = document.getElementById('sel-unit');
   const units = unitsMap[String(grade)] || [];
-  sel.innerHTML = '<option value="">-- 選擇單元 --</option>' +
-    units.map(u => `<option value="${u.id}">${u.title}</option>`).join('');
+  sel.innerHTML = '<option value="">選擇單元</option>' +
+    units.map(u => '<option value="' + u.id + '">' + u.title + '</option>').join('');
 }
 
 function buildIndicatorSelect(grade) {
@@ -230,13 +287,13 @@ function buildIndicatorSelect(grade) {
   units.forEach(u => u.indicators.forEach(ind => seen.add(ind)));
   const gradeQs = questions.filter(q => q.grade === grade);
   const validInds = [...seen].filter(ind => gradeQs.some(q => (q.indicators || []).includes(ind)));
-  sel.innerHTML = '<option value="">-- 選擇指標 --</option>' +
-    validInds.map(ind => `<option value="${ind}">${ind}</option>`).join('');
+  sel.innerHTML = '<option value="">選擇指標</option>' +
+    validInds.map(ind => '<option value="' + ind + '">' + ind + '</option>').join('');
 }
 
 function setMode(mode, btn) {
   selectedMode = mode;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   ['year', 'unit', 'indicator'].forEach(m => {
     document.getElementById('panel-' + m).classList.add('hidden');
@@ -254,7 +311,6 @@ function setCount(n, btn) {
 function getPoolQuestions() {
   if (!selectedGrade || !selectedMode) return [];
   let pool = questions.filter(q => q.grade === selectedGrade);
-
   if (selectedMode === 'year') {
     const year = Number(document.getElementById('sel-year').value);
     if (!year) return [];
@@ -277,7 +333,7 @@ function getPoolQuestions() {
 function updatePoolHint() {
   const pool = getPoolQuestions();
   document.getElementById('pool-hint').textContent =
-    pool.length > 0 ? `（本池共 ${pool.length} 題）` : '';
+    pool.length > 0 ? '共 ' + pool.length + ' 題可出' : '';
 }
 
 function shuffle(arr) {
@@ -318,27 +374,21 @@ function getConditionLabel() {
 
 function startQuiz() {
   document.getElementById('err-msg').classList.add('hidden');
-
   const cls = document.getElementById('sel-class').value;
   const name = getName();
-
-  if (!cls) { showError('請選擇班級'); return; }
-  if (!name) { showError('請選擇或輸入姓名'); return; }
-  if (!selectedGrade) { showError('請選擇年級'); return; }
+  if (!cls)          { showError('請選擇班級'); return; }
+  if (!name)         { showError('請選擇或輸入姓名'); return; }
+  if (!selectedGrade){ showError('請選擇年級'); return; }
   if (!selectedMode) { showError('請選擇出題方式'); return; }
-
   let pool = getPoolQuestions();
-  if (pool.length === 0) { showError('此條件下沒有題目，請換個選擇'); return; }
-
+  if (pool.length === 0) { showError('此條件沒有題目，換個選擇試試'); return; }
   pool = shuffle(pool);
   const finalCount = selectedCount === 0 ? pool.length : Math.min(selectedCount, pool.length);
-  const selected = pool.slice(0, finalCount);
-
   const config = {
     name, class: cls, grade: selectedGrade,
     mode: selectedMode,
     condition: getConditionLabel(),
-    questions: selected
+    questions: pool.slice(0, finalCount)
   };
   sessionStorage.setItem('quizConfig', JSON.stringify(config));
   window.location.href = 'quiz.html';

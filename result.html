@@ -7,45 +7,46 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); min-height: 100vh; }
-    .glass { background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+    body { font-family: 'Noto Sans TC', sans-serif; background: #f0f4ff; min-height: 100vh; }
     .rate-bar { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
-    .rate-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
-    @keyframes pop { 0%{transform:scale(0.8);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
-    .pop { animation: pop 0.5s ease-out; }
+    .rate-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease-out; }
+    @keyframes pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+    .pop { animation: pop 0.45s ease-out; }
   </style>
 </head>
-<body class="antialiased flex items-start justify-center p-4 md:p-8">
+<body class="flex flex-col items-center px-4 py-6">
 
-  <div class="w-full max-w-lg space-y-4">
+  <div class="w-full max-w-md space-y-4">
+
     <!-- 得分卡 -->
-    <div class="glass rounded-3xl overflow-hidden">
-      <div id="score-header" class="px-6 py-5 text-white text-center">
+    <div id="score-card" class="rounded-2xl overflow-hidden shadow-sm">
+      <div id="score-header" class="px-6 py-8 text-white text-center">
+        <div class="text-6xl mb-1 pop" id="score-emoji"></div>
         <div class="text-5xl font-black pop" id="score-display"></div>
-        <div class="text-lg font-bold mt-1 opacity-90" id="score-pct"></div>
+        <div class="text-xl font-bold mt-2 opacity-90" id="score-pct"></div>
+        <div class="text-sm mt-2 opacity-75" id="meta-info"></div>
       </div>
-      <div class="px-6 py-3 text-sm text-gray-500 text-center" id="meta-info"></div>
     </div>
 
     <!-- 指標分析 -->
-    <div class="glass rounded-3xl p-5">
-      <h3 class="font-black text-gray-800 mb-3">📊 指標分析</h3>
-      <div id="indicator-list" class="space-y-2 text-sm"></div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+      <h3 class="font-black text-gray-800 mb-4">📊 指標分析</h3>
+      <div id="indicator-list" class="space-y-3"></div>
     </div>
 
     <!-- 操作按鈕 -->
     <div class="flex gap-3">
       <button onclick="retryQuiz()"
-        class="flex-1 py-3 rounded-2xl border-2 border-blue-300 text-blue-600 font-black text-sm hover:bg-blue-50 transition">
+        class="flex-1 py-4 rounded-2xl border-2 border-blue-200 text-blue-600 font-black text-sm hover:bg-blue-50 transition">
         🔁 再練一次
       </button>
       <a href="index.html"
-        class="flex-1 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow transition text-center">
+        class="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm shadow transition text-center flex items-center justify-center">
         🏠 回首頁
       </a>
     </div>
 
-    <p id="submit-msg" class="text-center text-xs text-gray-400 h-4"></p>
+    <p id="submit-msg" class="text-center text-xs text-gray-400 pb-2"></p>
   </div>
 
 <script>
@@ -58,11 +59,19 @@ function init() {
 
   const pct = r.total ? Math.round(r.score / r.total * 100) : 0;
   const headerEl = document.getElementById('score-header');
-  if (pct >= 80) headerEl.classList.add('bg-green-600');
-  else if (pct >= 60) headerEl.classList.add('bg-amber-500');
-  else headerEl.classList.add('bg-red-500');
 
-  document.getElementById('score-display').textContent = r.score + ' / ' + r.total + ' 題';
+  let emoji, bgClass;
+  if (pct >= 80) {
+    emoji = '🎉'; bgClass = 'bg-gradient-to-br from-green-500 to-emerald-600';
+  } else if (pct >= 60) {
+    emoji = '💪'; bgClass = 'bg-gradient-to-br from-amber-400 to-orange-500';
+  } else {
+    emoji = '📖'; bgClass = 'bg-gradient-to-br from-red-400 to-rose-600';
+  }
+  headerEl.className = 'px-6 py-8 text-white text-center ' + bgClass;
+
+  document.getElementById('score-emoji').textContent = emoji;
+  document.getElementById('score-display').textContent = r.score + ' / ' + r.total;
   document.getElementById('score-pct').textContent = pct + '%';
   document.getElementById('meta-info').textContent =
     r.name + '・' + r.class + ' 班・' + r.grade + ' 年級・' + r.condition;
@@ -84,19 +93,31 @@ function init() {
 
   const list = document.getElementById('indicator-list');
   list.innerHTML = sorted.map(([ind, stat]) => {
-    const rate = stat.total ? stat.correct / stat.total : 0;
-    const ratePct = Math.round(rate * 100);
+    const ratePct = stat.total ? Math.round(stat.correct / stat.total * 100) : 0;
     const isWeak = ratePct < 80;
     const fillColor = ratePct >= 80 ? '#22c55e' : ratePct >= 60 ? '#f59e0b' : '#ef4444';
-    return '<div class="flex items-center gap-2 border-b border-gray-50 pb-2">' +
-      '<span class="w-4 flex-shrink-0 font-black ' + (isWeak ? 'text-red-500' : 'text-green-600') + '">' +
-        (isWeak ? '!' : '✓') + '</span>' +
-      '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + ind + '</span>' +
-      '<div class="flex-1 rate-bar"><div class="rate-fill" style="width:' + ratePct + '%;background:' + fillColor + '"></div></div>' +
-      '<span class="text-xs font-bold ml-2 w-20 text-right" style="color:' + fillColor + '">' +
-        stat.correct + '/' + stat.total + ' (' + ratePct + '%)</span>' +
-      '</div>';
+    const labelColor = isWeak ? 'text-red-500' : 'text-green-600';
+    return '<div>' +
+      '<div class="flex items-center justify-between mb-1">' +
+        '<span class="text-xs font-bold text-gray-700 flex items-center gap-1">' +
+          '<span class="' + labelColor + '">' + (isWeak ? '▲' : '✓') + '</span>' +
+          ind +
+        '</span>' +
+        '<span class="text-xs font-black" style="color:' + fillColor + '">' +
+          stat.correct + '/' + stat.total + '　' + ratePct + '%' +
+        '</span>' +
+      '</div>' +
+      '<div class="rate-bar"><div class="rate-fill" style="width:' + ratePct + '%;background:' + fillColor + '"></div></div>' +
+    '</div>';
   }).join('');
+
+  setTimeout(() => {
+    list.querySelectorAll('.rate-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      requestAnimationFrame(() => { el.style.width = w; });
+    });
+  }, 100);
 
   submitToGas(r);
 }
@@ -104,10 +125,7 @@ function init() {
 async function submitToGas(result) {
   const msg = document.getElementById('submit-msg');
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(result)
-    });
+    const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(result) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     msg.textContent = '✅ 成績已記錄';
   } catch (e) {

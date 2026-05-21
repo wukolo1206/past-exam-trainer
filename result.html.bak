@@ -49,14 +49,14 @@
   </div>
 
 <script>
-const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwZqVN-uQhFmo-GAq6Dl150pZYWDNMbNuQGl6EjFI0m54ilw8O7sJ6nXsBczLnhllO5/exec';
 
 function init() {
   const raw = sessionStorage.getItem('quizResult');
   if (!raw) { window.location.href = 'index.html'; return; }
   const r = JSON.parse(raw);
 
-  const pct = Math.round(r.score / r.total * 100);
+  const pct = r.total ? Math.round(r.score / r.total * 100) : 0;
   const headerEl = document.getElementById('score-header');
   if (pct >= 80) headerEl.classList.add('bg-green-600');
   else if (pct >= 60) headerEl.classList.add('bg-amber-500');
@@ -104,24 +104,32 @@ function init() {
 async function submitToGas(result) {
   const msg = document.getElementById('submit-msg');
   try {
-    await fetch(GAS_URL, {
+    const res = await fetch(GAS_URL, {
       method: 'POST',
       body: JSON.stringify(result)
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     msg.textContent = '✅ 成績已記錄';
   } catch (e) {
     msg.textContent = '⚠️ 成績未能儲存（離線模式）';
   }
 }
 
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function retryQuiz() {
   const cfgRaw = sessionStorage.getItem('quizConfig');
-  if (cfgRaw) {
-    const config = JSON.parse(cfgRaw);
-    const shuffled = [...config.questions].sort(() => Math.random() - 0.5);
-    config.questions = shuffled;
-    sessionStorage.setItem('quizConfig', JSON.stringify(config));
-  }
+  if (!cfgRaw) { window.location.href = 'index.html'; return; }
+  const config = JSON.parse(cfgRaw);
+  config.questions = shuffleArray(config.questions);
+  sessionStorage.setItem('quizConfig', JSON.stringify(config));
   sessionStorage.removeItem('quizResult');
   window.location.href = 'quiz.html';
 }

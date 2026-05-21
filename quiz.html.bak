@@ -79,7 +79,9 @@ let answers = [];
 function init() {
   const raw = sessionStorage.getItem('quizConfig');
   if (!raw) { window.location.href = 'index.html'; return; }
-  config = JSON.parse(raw);
+  try {
+    config = JSON.parse(raw);
+  } catch(e) { window.location.href = 'index.html'; return; }
   answers = config.questions.map(() => ({ chosen: null, is_correct: null }));
   renderQuestion(0);
 }
@@ -105,7 +107,7 @@ function renderQuestion(idx) {
 
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
-  const optKeys = Object.keys(q.options).sort();
+  const optKeys = Object.keys(q.options).sort((a, b) => Number(a) - Number(b));
   optKeys.forEach(key => {
     const btn = document.createElement('button');
     btn.className = 'opt-btn w-full text-left px-4 py-3 rounded-xl bg-white font-bold text-gray-700 text-sm';
@@ -178,6 +180,8 @@ function goNext() { if (current < config.questions.length - 1) renderQuestion(cu
 function goPrev() { if (current > 0) renderQuestion(current - 1); }
 
 function submitQuiz() {
+  const unanswered = answers.filter(a => a.chosen === null).length;
+  if (unanswered > 0 && !confirm('還有 ' + unanswered + ' 題未作答，確定要提交？')) return;
   const score = answers.filter(a => a.is_correct === true).length;
   const result = {
     name: config.name,
