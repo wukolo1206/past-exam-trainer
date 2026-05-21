@@ -134,6 +134,7 @@ function renderQuestion(idx) {
   }
 
   document.getElementById('q-stem').textContent = q.stem;
+  document.getElementById('q-stem').style.whiteSpace = 'pre-wrap';
 
   const optContainer = document.getElementById('q-options');
   optContainer.innerHTML = '';
