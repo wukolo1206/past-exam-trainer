@@ -204,7 +204,7 @@
   </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwZqVN-uQhFmo-GAq6Dl150pZYWDNMbNuQGl6EjFI0m54ilw8O7sJ6nXsBczLnhllO5/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbywQMklPYRVqS7MTW4Fq2KFY7bjZcY5PHS_ZBgBWJpKw3h8XKyRc-Ak68Sg1AJrm3Ci/exec';
 
 let questions = [];
 let unitsMap = {};
@@ -214,13 +214,25 @@ let selectedCount = 10;
 let dataReady = false;
 
 async function init() {
-  const [qRes, uRes] = await Promise.all([
-    fetch('data/questions.json'),
-    fetch('data/units_map.json')
-  ]);
-  questions = await qRes.json();
-  unitsMap = await uRes.json();
-  dataReady = true;
+  try {
+    const [qRes, uRes] = await Promise.all([
+      fetch(GAS_URL + '?action=questions'),
+      fetch('data/units_map.json')
+    ]);
+    const qData = await qRes.json();
+    questions = qData.questions || [];
+    unitsMap = await uRes.json();
+    dataReady = true;
+  } catch(e) {
+    // GAS 失敗時退回本地 JSON
+    const [qRes, uRes] = await Promise.all([
+      fetch('data/questions.json'),
+      fetch('data/units_map.json')
+    ]);
+    questions = await qRes.json();
+    unitsMap = await uRes.json();
+    dataReady = true;
+  }
 }
 init();
 
@@ -283,12 +295,17 @@ function buildUnitSelect(grade) {
 function buildIndicatorSelect(grade) {
   const sel = document.getElementById('sel-indicator');
   const units = unitsMap[String(grade)] || [];
+  const indToUnit = {};
+  units.forEach(u => u.indicators.forEach(ind => { if (!indToUnit[ind]) indToUnit[ind] = u.title; }));
   const seen = new Set();
   units.forEach(u => u.indicators.forEach(ind => seen.add(ind)));
   const gradeQs = questions.filter(q => q.grade === grade);
   const validInds = [...seen].filter(ind => gradeQs.some(q => (q.indicators || []).includes(ind)));
   sel.innerHTML = '<option value="">選擇指標</option>' +
-    validInds.map(ind => '<option value="' + ind + '">' + ind + '</option>').join('');
+    validInds.map(ind => {
+      const label = indToUnit[ind] ? ind + '（' + indToUnit[ind] + '）' : ind;
+      return '<option value="' + ind + '">' + label + '</option>';
+    }).join('');
 }
 
 function setMode(mode, btn) {

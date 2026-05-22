@@ -1,5 +1,8 @@
-// 修改這裡填入你的 Sheets ID
+// 答題紀錄試算表
 var SHEET_ID = '1Ol2HGyu5I3Q6lq9VvIEoAiq-swgohYfX-f2uA91PiwY';
+
+// 題庫試算表（單一維護來源）
+var QUESTION_SHEET_ID = '1tKUNfT2mBUTG-RdwGN6Tbn5BHFSb50AU-N5rklyfPoY';
 
 var RECORD_SHEET = '答題紀錄';
 var STUDENT_SHEET = '學生名單';
@@ -28,7 +31,9 @@ function doGet(e) {
   var action = e.parameter.action || '';
   var result;
 
-  if (action === 'students') {
+  if (action === 'questions') {
+    result = getQuestions(e.parameter.grade || '', e.parameter.year || '');
+  } else if (action === 'students') {
     result = getStudents(e.parameter.class || '');
   } else if (action === 'myrecord') {
     result = getMyRecord(e.parameter.class || '', e.parameter.name || '');
@@ -55,6 +60,73 @@ function doPost(e) {
       .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function getQuestions(gradeFilter, yearFilter) {
+  var ss = SpreadsheetApp.openById(QUESTION_SHEET_ID);
+  var ws = ss.getSheets()[0];
+  var rows = ws.getDataRange().getValues();
+  var header = rows[0];
+
+  var colIdx = {};
+  header.forEach(function(h, i) { colIdx[h] = i; });
+
+  var questions = [];
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    var grade = String(r[colIdx['grade']] || '');
+    var year = String(r[colIdx['year']] || '');
+
+    if (gradeFilter && grade !== String(gradeFilter)) continue;
+    if (yearFilter && year !== String(yearFilter)) continue;
+
+    // 解析選項
+    var options = {};
+    ['option1','option2','option3','option4'].forEach(function(col, idx) {
+      var val = r[colIdx[col]];
+      if (val !== '' && val !== null && val !== undefined) {
+        options[String(idx + 1)] = String(val);
+      }
+    });
+
+    // 解析答案：支援 "1或2" -> [1,2] 或單一數字
+    var answerRaw = String(r[colIdx['answer']] || '');
+    var answer;
+    if (answerRaw.indexOf('或') !== -1) {
+      answer = answerRaw.split('或').map(function(x) { return parseInt(x.trim(), 10); });
+    } else {
+      answer = parseInt(answerRaw, 10);
+    }
+
+    // 解析 indicators：可能是 JSON 陣列字串或逗號分隔純文字
+    var indRaw = String(r[colIdx['indicators']] || '');
+    var indicators = [];
+    if (indRaw) {
+      if (indRaw.charAt(0) === '[') {
+        try { indicators = JSON.parse(indRaw); } catch(e) { indicators = [indRaw]; }
+      } else {
+        indicators = indRaw.split(',').map(function(x) { return x.trim(); }).filter(function(x) { return x; });
+      }
+    }
+
+    var hasImage = r[colIdx['has_image']];
+    hasImage = (hasImage === true || hasImage === 'TRUE' || hasImage === 'true' || hasImage === 1 || hasImage === '1');
+
+    questions.push({
+      year: parseInt(year, 10),
+      grade: parseInt(grade, 10),
+      q_no: parseInt(r[colIdx['q_no']], 10),
+      stem: String(r[colIdx['stem']] || ''),
+      options: options,
+      answer: answer,
+      indicators: indicators,
+      indicator_unit: String(r[colIdx['indicator_unit']] || ''),
+      has_image: hasImage,
+      image_url: String(r[colIdx['image_url']] || '')
+    });
+  }
+
+  return { questions: questions, total: questions.length };
 }
 
 function getStudents(className) {
