@@ -172,7 +172,8 @@ function renderQuestion(idx) {
       fb.textContent = '✅ 答對了！';
       fb.className = 'mt-4 py-3 px-4 rounded-xl text-sm font-bold text-center bg-green-50 text-green-700';
     } else {
-      fb.textContent = '❌ 答錯了，正確答案是 ' + OPT_SYMBOLS[q.answer - 1];
+      const corrects = Array.isArray(q.answer) ? q.answer : [q.answer];
+      fb.textContent = '❌ 答錯了，正確答案是 ' + corrects.map(a => OPT_SYMBOLS[a - 1]).join('或');
       fb.className = 'mt-4 py-3 px-4 rounded-xl text-sm font-bold text-center bg-red-50 text-red-700';
     }
   } else {
@@ -191,7 +192,8 @@ function renderQuestion(idx) {
 }
 
 function applyStyle(btn, key, correctAnswer, chosenAnswer) {
-  if (key === correctAnswer) btn.classList.add('opt-correct');
+  const corrects = Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer];
+  if (corrects.includes(key)) btn.classList.add('opt-correct');
   else if (key === chosenAnswer) btn.classList.add('opt-wrong');
 }
 
@@ -199,7 +201,8 @@ function onAnswer(idx, chosenKey) {
   if (answers[idx].chosen !== null) return;
   const q = config.questions[idx];
   answers[idx].chosen = chosenKey;
-  answers[idx].is_correct = chosenKey === q.answer;
+  const corrects = Array.isArray(q.answer) ? q.answer : [q.answer];
+  answers[idx].is_correct = corrects.includes(chosenKey);
 
   document.querySelectorAll('.opt-btn').forEach(btn => {
     btn.classList.add('answered');
@@ -211,7 +214,7 @@ function onAnswer(idx, chosenKey) {
     fb.textContent = '✅ 答對了！';
     fb.className = 'mt-4 py-3 px-4 rounded-xl text-sm font-bold text-center bg-green-50 text-green-700';
   } else {
-    fb.textContent = '❌ 答錯了，正確答案是 ' + OPT_SYMBOLS[q.answer - 1];
+    fb.textContent = '❌ 答錯了，正確答案是 ' + corrects.map(a => OPT_SYMBOLS[a - 1]).join('或');
     fb.className = 'mt-4 py-3 px-4 rounded-xl text-sm font-bold text-center bg-red-50 text-red-700';
   }
   fb.classList.remove('hidden');
