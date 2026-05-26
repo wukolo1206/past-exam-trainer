@@ -124,18 +124,22 @@
         <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">3</span>
         <span class="font-black text-gray-700">怎麼出題？</span>
       </div>
-      <div class="grid grid-cols-3 gap-2 mb-3">
-        <button onclick="setMode('year',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
-          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📅</span>
+      <div class="grid grid-cols-4 gap-2 mb-3">
+        <button onclick="setMode('year',this)" class="mode-btn rounded-xl p-2 flex flex-col items-center gap-1">
+          <span class="mode-icon w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📅</span>
           <span class="text-xs font-black text-gray-700">按年份</span>
         </button>
-        <button onclick="setMode('unit',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
-          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📚</span>
+        <button onclick="setMode('unit',this)" class="mode-btn rounded-xl p-2 flex flex-col items-center gap-1">
+          <span class="mode-icon w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📚</span>
           <span class="text-xs font-black text-gray-700">按單元</span>
         </button>
-        <button onclick="setMode('indicator',this)" class="mode-btn rounded-xl p-3 flex flex-col items-center gap-2">
-          <span class="mode-icon w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">🎯</span>
+        <button onclick="setMode('indicator',this)" class="mode-btn rounded-xl p-2 flex flex-col items-center gap-1">
+          <span class="mode-icon w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">🎯</span>
           <span class="text-xs font-black text-gray-700">按指標</span>
+        </button>
+        <button onclick="setMode('domain',this)" class="mode-btn rounded-xl p-2 flex flex-col items-center gap-1">
+          <span class="mode-icon w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-lg transition">📊</span>
+          <span class="text-xs font-black text-gray-700">按向度</span>
         </button>
       </div>
 
@@ -164,6 +168,20 @@
         <select id="sel-indicator" onchange="updatePoolHint()"
           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
           <option value="">選擇指標</option>
+        </select>
+      </div>
+      <div id="panel-domain" class="hidden space-y-2">
+        <select id="sel-domain" onchange="onDomainChange(); updatePoolHint()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+          <option value="">選擇評量向度</option>
+          <option value="數與計算">數與計算</option>
+          <option value="量與實測">量與實測</option>
+          <option value="幾何">幾何</option>
+          <option value="代數">代數</option>
+        </select>
+        <select id="sel-domain-type" onchange="updatePoolHint()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none font-bold text-gray-700">
+          <option value="">全部類型</option>
         </select>
       </div>
     </div>
@@ -312,11 +330,25 @@ function setMode(mode, btn) {
   selectedMode = mode;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  ['year', 'unit', 'indicator'].forEach(m => {
+  ['year', 'unit', 'indicator', 'domain'].forEach(m => {
     document.getElementById('panel-' + m).classList.add('hidden');
   });
   document.getElementById('panel-' + mode).classList.remove('hidden');
   updatePoolHint();
+}
+
+function onDomainChange() {
+  const domain = document.getElementById('sel-domain').value;
+  const typeSel = document.getElementById('sel-domain-type');
+  typeSel.innerHTML = '<option value="">全部類型</option>';
+  if (!domain || !selectedGrade) return;
+  const used = new Set(
+    questions.filter(q => q.grade === selectedGrade && q.assessment_domain === domain)
+             .map(q => q.assessment_type).filter(Boolean)
+  );
+  ['概念理解', '程序執行', '解題思考'].filter(t => used.has(t)).forEach(t => {
+    typeSel.innerHTML += '<option value="' + t + '">' + t + '</option>';
+  });
 }
 
 function setCount(n, btn) {
@@ -343,6 +375,12 @@ function getPoolQuestions() {
     const ind = document.getElementById('sel-indicator').value;
     if (!ind) return [];
     pool = pool.filter(q => (q.indicators || []).includes(ind));
+  } else if (selectedMode === 'domain') {
+    const domain = document.getElementById('sel-domain').value;
+    if (!domain) return [];
+    pool = pool.filter(q => q.assessment_domain === domain);
+    const type = document.getElementById('sel-domain-type').value;
+    if (type) pool = pool.filter(q => q.assessment_type === type);
   }
   return pool;
 }
@@ -385,6 +423,11 @@ function getConditionLabel() {
   }
   if (selectedMode === 'indicator') {
     return document.getElementById('sel-indicator').value;
+  }
+  if (selectedMode === 'domain') {
+    const domain = document.getElementById('sel-domain').value;
+    const type = document.getElementById('sel-domain-type').value;
+    return domain + (type ? '／' + type : '');
   }
   return '';
 }
