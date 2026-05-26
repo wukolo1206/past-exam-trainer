@@ -236,7 +236,43 @@ function renderSelectedList() {
 }
 
 // ── 輸出（Task 8、9 補充） ──
-document.getElementById('btn-print').addEventListener('click', function(){ /* 見 Task 8 */ });
+
+var SYMS = ['①','②','③','④'];
+
+function buildPrintHTML(selectedQs, title) {
+  return selectedQs.map(function(q, idx) {
+    var opts = '';
+    if (!q.has_image && q.options && Object.keys(q.options).length) {
+      opts = '<div class="print-q-opts">' +
+        [1,2,3,4].filter(function(i){ return q.options[String(i)]; })
+          .map(function(i){ return '<div class="print-q-opt">' + SYMS[i-1] + ' ' + q.options[String(i)] + '</div>'; })
+          .join('') +
+        '</div>';
+    }
+    var img = '';
+    if (q.has_image && q.image_path) {
+      img = '<img src="' + q.image_path + '" class="print-q-img">';
+    }
+    return '<div class="print-q">' +
+      '<div class="print-q-num">第 ' + (idx+1) + ' 題</div>' +
+      '<div class="print-q-stem">' + (q.stem || '') + '</div>' +
+      opts + img +
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('btn-print').addEventListener('click', function() {
+  if (selectedIds.size === 0) { alert('請先勾選要出的題目'); return; }
+  var title = document.getElementById('exam-title').value || '國小數學學力檢測考古題練習卷';
+  var selected = allQuestions.filter(function(q){ return selectedIds.has(qKey(q)); });
+  selected.sort(function(a,b){ return a.grade-b.grade || a.year-b.year || a.q_no-b.q_no; });
+
+  document.getElementById('pa-title').textContent = title;
+  document.getElementById('pa-meta').textContent = '共 ' + selected.length + ' 題';
+  document.getElementById('pa-questions').innerHTML = buildPrintHTML(selected, title);
+
+  window.print();
+});
 document.getElementById('btn-word').addEventListener('click', function(){ /* 見 Task 9 */ });
 document.getElementById('btn-pdf').addEventListener('click', function(){ /* 見 Task 9 */ });
 </script>
