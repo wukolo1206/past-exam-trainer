@@ -5300,6 +5300,86 @@
     "assessment_type": "程序執行"
   },
   {
+    "year": 110,
+    "grade": 6,
+    "stem": "",
+    "option1": "",
+    "option2": "",
+    "option3": "",
+    "option4": "",
+    "answer": "",
+    "indicators": [
+      "N-6-5"
+    ],
+    "has_image": true,
+    "q_no": 18,
+    "image_path": "https://wukolo1206.github.io/past-exam-trainer/img/110_6_q18.png"
+  },
+  {
+    "year": 110,
+    "grade": 6,
+    "stem": "",
+    "option1": "",
+    "option2": "",
+    "option3": "",
+    "option4": "",
+    "answer": "",
+    "indicators": [
+      "N-6-5"
+    ],
+    "has_image": true,
+    "q_no": 19,
+    "image_path": "https://wukolo1206.github.io/past-exam-trainer/img/110_6_q19.png"
+  },
+  {
+    "year": 110,
+    "grade": 6,
+    "stem": "",
+    "option1": "",
+    "option2": "",
+    "option3": "",
+    "option4": "",
+    "answer": "",
+    "indicators": [
+      "N-6-5"
+    ],
+    "has_image": true,
+    "q_no": 22,
+    "image_path": "https://wukolo1206.github.io/past-exam-trainer/img/110_6_q22.png"
+  },
+  {
+    "year": 110,
+    "grade": 6,
+    "stem": "",
+    "option1": "",
+    "option2": "",
+    "option3": "",
+    "option4": "",
+    "answer": "",
+    "indicators": [
+      "N-6-5"
+    ],
+    "has_image": true,
+    "q_no": 23,
+    "image_path": "https://wukolo1206.github.io/past-exam-trainer/img/110_6_q23.png"
+  },
+  {
+    "year": 110,
+    "grade": 6,
+    "stem": "",
+    "option1": "",
+    "option2": "",
+    "option3": "",
+    "option4": "",
+    "answer": "",
+    "indicators": [
+      "N-6-5"
+    ],
+    "has_image": true,
+    "q_no": 24,
+    "image_path": "https://wukolo1206.github.io/past-exam-trainer/img/110_6_q24.png"
+  },
+  {
     "year": 111,
     "grade": 3,
     "q_no": 1,
