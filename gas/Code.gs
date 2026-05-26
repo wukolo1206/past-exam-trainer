@@ -232,12 +232,31 @@ function getMyRecord(className, name) {
 function getDashboard(className) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var sheet = ss.getSheetByName(RECORD_SHEET);
-  if (!sheet) return { indicatorHeatmap: [], studentMatrix: [], hardestQuestions: [] };
+  if (!sheet) return { indicatorHeatmap: [], studentMatrix: [], hardestQuestions: [], domainBreakdown: [], typeBreakdown: [] };
+
+  // Build question lookup: "year_qno" -> {domain, type}
+  var qss = SpreadsheetApp.openById(QUESTION_SHEET_ID);
+  var qws = qss.getSheets()[0];
+  var qrows = qws.getDataRange().getValues();
+  var qheader = qrows[0];
+  var qcol = {};
+  qheader.forEach(function(h, i) { qcol[h] = i; });
+  var qLookup = {};
+  for (var qi = 1; qi < qrows.length; qi++) {
+    var qr = qrows[qi];
+    var qyear = String(qr[qcol['year']] || '');
+    var qqno  = String(qr[qcol['q_no']] || '');
+    var domain = (qcol['assessment_domain'] !== undefined) ? (String(qr[qcol['assessment_domain']] || '') || null) : null;
+    var atype  = (qcol['assessment_type']   !== undefined) ? (String(qr[qcol['assessment_type']]   || '') || null) : null;
+    if (qyear && qqno) qLookup[qyear + '_' + qqno] = { domain: domain, type: atype };
+  }
 
   var rows = sheet.getDataRange().getValues();
-  var indMap = {};       // indicator -> {total, correct}
+  var indMap = {};        // indicator -> {total, correct}
+  var domainMap = {};     // domain -> {total, correct}
+  var typeMap = {};       // type -> {total, correct}
   var studentIndMap = {}; // name -> indicator -> {total, correct}
-  var qMap = {};         // year_qno -> {year, q_no, indicator, total, correct}
+  var qMap = {};          // year_qno -> {year, q_no, indicator, total, correct}
 
   for (var i = 1; i < rows.length; i++) {
     var r = rows[i];
@@ -263,6 +282,16 @@ function getDashboard(className) {
       var key = year + '_' + qno;
       if (!qMap[key]) qMap[key] = { year: year, q_no: qno, indicator: indicator, total: 0, correct: 0 };
       qMap[key].total++; qMap[key].correct += correct;
+
+      var qInfo = qLookup[String(year) + '_' + String(qno)] || {};
+      if (qInfo.domain) {
+        if (!domainMap[qInfo.domain]) domainMap[qInfo.domain] = { total: 0, correct: 0 };
+        domainMap[qInfo.domain].total++; domainMap[qInfo.domain].correct += correct;
+      }
+      if (qInfo.type) {
+        if (!typeMap[qInfo.type]) typeMap[qInfo.type] = { total: 0, correct: 0 };
+        typeMap[qInfo.type].total++; typeMap[qInfo.type].correct += correct;
+      }
     }
   }
 
@@ -291,10 +320,29 @@ function getDashboard(className) {
                rate: q.total ? q.correct / q.total : null, total: q.total };
     });
 
+  var domainOrder = ['數與計算','量與實測','幾何','空間與形狀','代數','關係','統計與機率','統計'];
+  var domainBreakdown = Object.entries(domainMap).map(function(kv) {
+    return { domain: kv[0], total: kv[1].total, correct: kv[1].correct,
+             rate: kv[1].total ? kv[1].correct / kv[1].total : null };
+  }).sort(function(a, b) {
+    var ia = domainOrder.indexOf(a.domain), ib = domainOrder.indexOf(b.domain);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
+
+  var typeOrder = ['概念理解','程序執行','解題思考'];
+  var typeBreakdown = Object.entries(typeMap).map(function(kv) {
+    return { type: kv[0], total: kv[1].total, correct: kv[1].correct,
+             rate: kv[1].total ? kv[1].correct / kv[1].total : null };
+  }).sort(function(a, b) {
+    return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+  });
+
   return {
     indicatorHeatmap: indicatorHeatmap,
     studentMatrix: studentMatrix,
     hardestQuestions: hardestQuestions,
-    allIndicators: allIndicators
+    allIndicators: allIndicators,
+    domainBreakdown: domainBreakdown,
+    typeBreakdown: typeBreakdown
   };
 }

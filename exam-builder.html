@@ -65,6 +65,21 @@
         <label class="block text-xs font-bold text-gray-500 mb-1">指標代碼（可輸入關鍵字）</label>
         <input id="f-indicator" type="text" placeholder="例：N-3, S-5-2" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 text-sm outline-none focus:border-blue-500">
       </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-500 mb-1">評量向度</label>
+        <select id="f-domain" class="px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold outline-none focus:border-blue-500">
+          <option value="">全部</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-500 mb-1">認知類型</label>
+        <select id="f-type" class="px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold outline-none focus:border-blue-500">
+          <option value="">全部</option>
+          <option value="概念理解">概念理解</option>
+          <option value="程序執行">程序執行</option>
+          <option value="解題思考">解題思考</option>
+        </select>
+      </div>
       <button id="btn-filter" class="px-5 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition">套用篩選</button>
       <span id="filter-count" class="text-sm text-gray-500"></span>
     </div>
@@ -138,6 +153,15 @@ function initYearSelects(qs) {
     });
     sel.value = i === 0 ? years[0] : years[years.length-1];
   });
+  var domainOrder = ['數與計算','量與實測','幾何','空間與形狀','代數','關係','統計與機率','統計'];
+  var domains = [...new Set(qs.map(function(q){ return q.assessment_domain; }).filter(Boolean))];
+  domains.sort(function(a,b){ var ia=domainOrder.indexOf(a), ib=domainOrder.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
+  var domSel = document.getElementById('f-domain');
+  domains.forEach(function(d){
+    var opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    domSel.appendChild(opt);
+  });
 }
 
 // ── 篩選邏輯 ──
@@ -148,11 +172,15 @@ function applyFilter() {
   var yearFrom = parseInt(document.getElementById('f-year-from').value);
   var yearTo   = parseInt(document.getElementById('f-year-to').value);
   var indKw    = document.getElementById('f-indicator').value.trim().toUpperCase();
+  var domain   = document.getElementById('f-domain').value;
+  var atype    = document.getElementById('f-type').value;
 
   filteredQuestions = allQuestions.filter(function(q) {
     if (grade && q.grade !== parseInt(grade)) return false;
     if (q.year < yearFrom || q.year > yearTo) return false;
     if (indKw && !(q.indicators||[]).some(function(c){ return c.toUpperCase().includes(indKw); })) return false;
+    if (domain && q.assessment_domain !== domain) return false;
+    if (atype  && q.assessment_type   !== atype)  return false;
     return true;
   });
 

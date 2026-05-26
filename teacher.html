@@ -56,6 +56,18 @@
       <div id="heatmap-list" class="space-y-2"></div>
     </div>
 
+    <!-- 評量向度答對率 -->
+    <div id="section-domain" class="glass rounded-2xl p-5 md:p-6 hidden">
+      <h3 class="font-black text-gray-800 mb-3">📐 評量向度答對率</h3>
+      <div id="domain-list" class="space-y-2"></div>
+    </div>
+
+    <!-- 認知類型答對率 -->
+    <div id="section-type" class="glass rounded-2xl p-5 md:p-6 hidden">
+      <h3 class="font-black text-gray-800 mb-3">🧠 認知類型答對率</h3>
+      <div id="type-list" class="space-y-2"></div>
+    </div>
+
     <!-- 最難題 Top 10 -->
     <div id="section-hard" class="glass rounded-2xl p-5 md:p-6 hidden">
       <h3 class="font-black text-gray-800 mb-3">😓 最難題 Top 10</h3>
@@ -86,7 +98,7 @@ async function loadDashboard() {
   if (!cls) { alert('請選擇班級'); return; }
   currentClass = cls;
   document.getElementById('loading').classList.remove('hidden');
-  ['section-heatmap','section-hard','section-matrix'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['section-heatmap','section-domain','section-type','section-hard','section-matrix'].forEach(id => document.getElementById(id).classList.add('hidden'));
 
   try {
     const res = await fetch(GAS_URL + '?action=dashboard&class=' + cls);
@@ -126,7 +138,27 @@ function renderDashboard(data) {
   }).join('');
   document.getElementById('section-heatmap').classList.remove('hidden');
 
-  // 2. 最難題
+  // 2. 評量向度
+  function renderBreakdownBar(items, keyName, containerId, sectionId) {
+    if (!items || items.length === 0) return;
+    var el = document.getElementById(containerId);
+    el.innerHTML = items.map(function(item) {
+      var pct = item.rate !== null ? Math.round(item.rate * 100) : null;
+      var color = pct === null ? '#9ca3af' : pct >= 80 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+      return '<div class="flex items-center gap-2 text-sm">' +
+        '<span class="font-black w-20 flex-shrink-0 text-xs text-gray-700">' + escapeHtml(item[keyName]) + '</span>' +
+        '<div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><div style="width:' + (pct||0) + '%;background:' + color + ';height:100%;border-radius:4px"></div></div>' +
+        '<span class="text-xs font-bold w-24 text-right" style="color:' + color + '">' +
+          (pct !== null ? pct + '%' : '—') +
+          '&nbsp;<span class="text-gray-400 font-normal text-xs">(' + item.total + '題次)</span></span>' +
+        '</div>';
+    }).join('');
+    document.getElementById(sectionId).classList.remove('hidden');
+  }
+  renderBreakdownBar(data.domainBreakdown, 'domain', 'domain-list', 'section-domain');
+  renderBreakdownBar(data.typeBreakdown,   'type',   'type-list',   'section-type');
+
+  // 4. 最難題
   const hardList = document.getElementById('hard-list');
   if (data.hardestQuestions.length === 0) {
     hardList.innerHTML = '<p class="text-gray-400 text-sm">資料不足（需各題至少 3 人作答）</p>';
@@ -146,7 +178,7 @@ function renderDashboard(data) {
   }
   document.getElementById('section-hard').classList.remove('hidden');
 
-  // 3. 矩陣
+  // 5. 矩陣
   const allInds = data.allIndicators;
   const table = document.getElementById('matrix-table');
   if (data.studentMatrix.length === 0) {
