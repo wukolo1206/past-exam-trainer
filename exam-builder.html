@@ -161,7 +161,41 @@ function applyFilter() {
 }
 
 // ── 渲染題目列表（Task 7 補充） ──
-function renderQList(qs) { /* 見 Task 7 */ }
+function renderQList(qs) {
+  var container = document.getElementById('q-list');
+  if (qs.length === 0) {
+    container.innerHTML = '<p class="text-gray-400 text-sm text-center py-8">沒有符合條件的題目</p>';
+    return;
+  }
+  container.innerHTML = qs.map(function(q) {
+    var key = qKey(q);
+    var checked = selectedIds.has(key);
+    var stemPreview = (q.stem || '').slice(0, 45) + (q.stem && q.stem.length > 45 ? '…' : '');
+    var imgBadge = q.has_image ? '<span class="ml-1 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-bold">含圖</span>' : '';
+    var inds = (q.indicators||[]).map(function(c){ return '<span class="text-xs bg-blue-50 text-blue-600 px-1 rounded">' + c + '</span>'; }).join(' ');
+    return '<label class="flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer transition ' +
+      (checked ? 'border-blue-400 bg-blue-50' : 'border-gray-100 hover:border-blue-200') + '">' +
+      '<input type="checkbox" class="mt-0.5 q-check" data-key="' + key + '" ' + (checked ? 'checked' : '') + '>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-xs font-bold text-gray-500 mb-0.5">' +
+          q.year + '年 ' + q.grade + '年級 第' + q.q_no + '題' + imgBadge +
+        '</div>' +
+        '<div class="text-sm text-gray-800 leading-snug">' + stemPreview + '</div>' +
+        '<div class="mt-1 flex flex-wrap gap-1">' + inds + '</div>' +
+      '</div>' +
+    '</label>';
+  }).join('');
+
+  // 綁定勾選事件
+  container.querySelectorAll('.q-check').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      if (this.checked) selectedIds.add(this.dataset.key);
+      else selectedIds.delete(this.dataset.key);
+      renderQList(filteredQuestions);
+      renderSelectedList();
+    });
+  });
+}
 
 // ── 全選 / 清除 ──
 document.getElementById('btn-select-all').addEventListener('click', function() {
@@ -176,7 +210,30 @@ document.getElementById('btn-clear-all').addEventListener('click', function() {
 });
 
 // ── 右側清單（Task 7 補充） ──
-function renderSelectedList() { /* 見 Task 7 */ }
+function renderSelectedList() {
+  var count = selectedIds.size;
+  document.getElementById('selected-count').textContent = '（' + count + ' 題）';
+  var container = document.getElementById('selected-list');
+  if (count === 0) {
+    container.innerHTML = '<p class="text-center py-4">尚未選取任何題目</p>';
+    return;
+  }
+  var selected = allQuestions.filter(function(q){ return selectedIds.has(qKey(q)); });
+  selected.sort(function(a,b){ return a.grade-b.grade || a.year-b.year || a.q_no-b.q_no; });
+  container.innerHTML = selected.map(function(q) {
+    return '<div class="flex items-center justify-between py-0.5 border-b border-gray-100">' +
+      '<span>' + q.year + '年 ' + q.grade + '年級 #' + q.q_no + (q.has_image ? ' 📷' : '') + '</span>' +
+      '<button class="text-red-400 hover:text-red-600 font-bold" data-key="' + qKey(q) + '">✕</button>' +
+    '</div>';
+  }).join('');
+  container.querySelectorAll('button[data-key]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      selectedIds.delete(this.dataset.key);
+      renderQList(filteredQuestions);
+      renderSelectedList();
+    });
+  });
+}
 
 // ── 輸出（Task 8、9 補充） ──
 document.getElementById('btn-print').addEventListener('click', function(){ /* 見 Task 8 */ });
