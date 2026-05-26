@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自訂考卷產生器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .hidden { display: none !important; }
+    /* 列印樣式 */
+    @media print {
+      #app-ui { display: none !important; }
+      #print-area { display: block !important; }
+    }
+    #print-area { display: none; font-family: 'Noto Sans TC', sans-serif; }
+    .print-header { text-align: center; font-size: 18px; font-weight: 900; margin-bottom: 4px; }
+    .print-meta { text-align: center; font-size: 12px; color: #666; margin-bottom: 20px; }
+    .print-q { margin-bottom: 20px; page-break-inside: avoid; }
+    .print-q-num { font-weight: 700; font-size: 14px; }
+    .print-q-stem { font-size: 14px; line-height: 1.7; margin: 4px 0; }
+    .print-q-opts { margin-left: 16px; }
+    .print-q-opt { font-size: 13px; line-height: 1.8; }
+    .print-q-img { max-width: 320px; margin: 6px 0; }
+  </style>
+</head>
+<body class="antialiased bg-gradient-to-br from-blue-50 to-sky-100 min-h-screen">
+
+<!-- ══ 主介面 ══ -->
+<div id="app-ui" class="max-w-7xl mx-auto p-4 md:p-6 space-y-4">
+
+  <!-- 頂部導覽 -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl font-black text-blue-900">📝 自訂考卷產生器</h1>
+    <a href="teacher.html" class="text-sm text-blue-500 font-bold">← 回教師頁</a>
+  </div>
+
+  <!-- 篩選器 -->
+  <div class="bg-white/95 rounded-2xl shadow p-5 space-y-3">
+    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">篩選條件</p>
+    <div class="flex flex-wrap gap-3 items-end">
+      <div>
+        <label class="block text-xs font-bold text-gray-500 mb-1">年級</label>
+        <select id="f-grade" class="px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold outline-none focus:border-blue-500">
+          <option value="">全部</option>
+          <option value="3">3 年級</option>
+          <option value="4">4 年級</option>
+          <option value="5">5 年級</option>
+          <option value="6">6 年級</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-500 mb-1">年份（從）</label>
+        <select id="f-year-from" class="px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold outline-none focus:border-blue-500">
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-500 mb-1">年份（到）</label>
+        <select id="f-year-to" class="px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold outline-none focus:border-blue-500">
+        </select>
+      </div>
+      <div class="flex-1 min-w-48">
+        <label class="block text-xs font-bold text-gray-500 mb-1">指標代碼（可輸入關鍵字）</label>
+        <input id="f-indicator" type="text" placeholder="例：N-3, S-5-2" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 text-sm outline-none focus:border-blue-500">
+      </div>
+      <button id="btn-filter" class="px-5 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition">套用篩選</button>
+      <span id="filter-count" class="text-sm text-gray-500"></span>
+    </div>
+  </div>
+
+  <!-- 主體：題目列表 + 出卷清單 -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" style="min-height:520px">
+
+    <!-- 左：題目列表 -->
+    <div class="lg:col-span-2 bg-white/95 rounded-2xl shadow p-4 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-bold text-gray-600">題目列表</p>
+        <div class="flex gap-2">
+          <button id="btn-select-all" class="text-xs text-blue-600 font-bold hover:underline">全選</button>
+          <span class="text-gray-300">|</span>
+          <button id="btn-clear-all" class="text-xs text-red-500 font-bold hover:underline">清除</button>
+        </div>
+      </div>
+      <div id="q-list" class="flex-1 overflow-y-auto space-y-2" style="max-height:520px">
+        <p class="text-gray-400 text-sm text-center py-8">請先套用篩選條件</p>
+      </div>
+    </div>
+
+    <!-- 右：出卷清單 -->
+    <div class="bg-white/95 rounded-2xl shadow p-4 flex flex-col">
+      <p class="text-sm font-bold text-gray-600 mb-3">出卷清單 <span id="selected-count" class="text-blue-600">（0 題）</span></p>
+      <div id="selected-list" class="flex-1 overflow-y-auto space-y-1 text-xs text-gray-500" style="max-height:360px">
+        <p class="text-center py-4">尚未選取任何題目</p>
+      </div>
+      <div class="mt-4 space-y-2 border-t pt-4">
+        <input id="exam-title" type="text" value="國小數學學力檢測考古題練習卷" class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 text-xs outline-none focus:border-blue-500" placeholder="考卷標題">
+        <button id="btn-print" class="w-full py-2 bg-slate-700 text-white rounded-xl text-sm font-bold hover:bg-slate-900 transition">🖨 列印</button>
+        <button id="btn-word" class="w-full py-2 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition">📄 下載 Word</button>
+        <button id="btn-pdf" class="w-full py-2 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition">📑 下載 PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 列印區（螢幕隱藏，列印時顯示） ══ -->
+<div id="print-area">
+  <div class="print-header" id="pa-title"></div>
+  <div class="print-meta" id="pa-meta"></div>
+  <div id="pa-questions"></div>
+</div>
+
+<script>
+var allQuestions = [];
+var filteredQuestions = [];
+var selectedIds = new Set(); // key: "year_grade_qno"
+
+function qKey(q) { return q.year + '_' + q.grade + '_' + q.q_no; }
+
+// ── 載入資料 ──
+fetch('data/questions.json')
+  .then(function(r){ return r.json(); })
+  .then(function(qs){
+    allQuestions = qs;
+    initYearSelects(qs);
+  });
+
+function initYearSelects(qs) {
+  var years = [...new Set(qs.map(function(q){ return q.year; }))].sort();
+  ['f-year-from','f-year-to'].forEach(function(id, i) {
+    var sel = document.getElementById(id);
+    years.forEach(function(y){
+      var opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y + '年';
+      sel.appendChild(opt);
+    });
+    sel.value = i === 0 ? years[0] : years[years.length-1];
+  });
+}
+
+// ── 篩選邏輯 ──
+document.getElementById('btn-filter').addEventListener('click', applyFilter);
+
+function applyFilter() {
+  var grade    = document.getElementById('f-grade').value;
+  var yearFrom = parseInt(document.getElementById('f-year-from').value);
+  var yearTo   = parseInt(document.getElementById('f-year-to').value);
+  var indKw    = document.getElementById('f-indicator').value.trim().toUpperCase();
+
+  filteredQuestions = allQuestions.filter(function(q) {
+    if (grade && q.grade !== parseInt(grade)) return false;
+    if (q.year < yearFrom || q.year > yearTo) return false;
+    if (indKw && !(q.indicators||[]).some(function(c){ return c.toUpperCase().includes(indKw); })) return false;
+    return true;
+  });
+
+  document.getElementById('filter-count').textContent = '已篩出 ' + filteredQuestions.length + ' 題';
+  renderQList(filteredQuestions);
+}
+
+// ── 渲染題目列表（Task 7 補充） ──
+function renderQList(qs) { /* 見 Task 7 */ }
+
+// ── 全選 / 清除 ──
+document.getElementById('btn-select-all').addEventListener('click', function() {
+  filteredQuestions.forEach(function(q){ selectedIds.add(qKey(q)); });
+  renderQList(filteredQuestions);
+  renderSelectedList();
+});
+document.getElementById('btn-clear-all').addEventListener('click', function() {
+  selectedIds.clear();
+  renderQList(filteredQuestions);
+  renderSelectedList();
+});
+
+// ── 右側清單（Task 7 補充） ──
+function renderSelectedList() { /* 見 Task 7 */ }
+
+// ── 輸出（Task 8、9 補充） ──
+document.getElementById('btn-print').addEventListener('click', function(){ /* 見 Task 8 */ });
+document.getElementById('btn-word').addEventListener('click', function(){ /* 見 Task 9 */ });
+document.getElementById('btn-pdf').addEventListener('click', function(){ /* 見 Task 9 */ });
+</script>
+</body>
+</html>
