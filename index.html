@@ -53,10 +53,10 @@
 </head>
 <body class="flex flex-col items-center px-4 py-6 md:py-10">
 
-  <div class="w-full max-w-md space-y-4">
+  <div class="w-full max-w-5xl space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
 
     <!-- 標題 -->
-    <div class="text-center mb-2">
+    <div class="text-center mb-2 md:col-span-2">
       <div class="text-4xl mb-1">🏆</div>
       <h1 class="text-2xl font-black text-gray-800">學力檢測練習</h1>
       <p class="text-gray-500 text-sm mt-0.5">考古題刷題，掌握每個指標</p>
@@ -94,7 +94,7 @@
         <span class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-black flex items-center justify-center">2</span>
         <span class="font-black text-gray-700">幾年級的題目？</span>
       </div>
-      <div class="grid grid-cols-4 gap-2">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3">
         <button onclick="setGrade(3,this)" data-g="3"
           class="grade-btn rounded-xl py-4 flex flex-col items-center gap-1">
           <span class="text-2xl">🦋</span>
@@ -187,16 +187,16 @@
     </div>
 
     <!-- 錯誤訊息 -->
-    <p id="err-msg" class="hidden text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl py-2 px-4"></p>
+    <p id="err-msg" class="hidden text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl py-2 px-4 md:col-span-2"></p>
 
     <!-- 開始按鈕 -->
     <button onclick="startQuiz()"
-      class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-xl py-5 rounded-2xl shadow-lg transition-all">
+      class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-black text-xl md:text-2xl py-5 md:py-6 rounded-2xl shadow-lg transition-all md:col-span-2">
       開始練習 →
     </button>
 
     <!-- 底部連結 -->
-    <div class="flex gap-3 pb-4">
+    <div class="flex gap-3 pb-4 md:col-span-2">
       <a href="record.html" class="flex-1 text-center text-sm text-gray-500 hover:text-blue-600 font-bold py-2 bg-white rounded-xl shadow-sm transition">📖 我的練習紀錄</a>
       <a href="teacher.html" class="flex-1 text-center text-sm text-gray-500 hover:text-blue-600 font-bold py-2 bg-white rounded-xl shadow-sm transition">👨‍🏫 教師後台</a>
     </div>

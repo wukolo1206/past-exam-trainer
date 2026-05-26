@@ -54,7 +54,11 @@
   </div>
 
 <script>
-const GAS_URL = 'YOUR_GAS_WEB_APP_URL';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbywQMklPYRVqS7MTW4Fq2KFY7bjZcY5PHS_ZBgBWJpKw3h8XKyRc-Ak68Sg1AJrm3Ci/exec';
+
+function esc(s) {
+  return String(s ?? '—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 async function loadRecord() {
   const cls = document.getElementById('q-class').value;
@@ -66,9 +70,19 @@ async function loadRecord() {
   document.getElementById('result-area').innerHTML = '';
 
   try {
-    const res = await fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name));
+    const [res, qRes] = await Promise.all([
+      fetch(GAS_URL + '?action=myrecord&class=' + encodeURIComponent(cls) + '&name=' + encodeURIComponent(name)),
+      fetch('data/questions.json')
+    ]);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    renderRecord(data);
+    if (data.error) throw new Error(data.error);
+    let qMap = new Map();
+    try {
+      const qArr = await qRes.json();
+      qArr.forEach(function(q) { qMap.set(q.year + '_' + q.q_no, q); });
+    } catch (e2) { /* questions.json 載入失敗，忽略 */ }
+    renderRecord(data, qMap);
   } catch (e) {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('result-area').innerHTML =
@@ -77,7 +91,8 @@ async function loadRecord() {
   }
 }
 
-function renderRecord(data) {
+function renderRecord(data, qMap) {
+  if (!qMap) qMap = new Map();
   document.getElementById('loading').classList.add('hidden');
   const area = document.getElementById('result-area');
   area.innerHTML = '';
@@ -98,8 +113,8 @@ function renderRecord(data) {
         const pct = h.total ? Math.round(h.score / h.total * 100) : 0;
         const scoreColor = pct >= 80 ? 'text-green-600' : 'text-red-500';
         return '<tr class="border-b border-gray-50">' +
-          '<td class="py-1.5 pr-2 text-gray-500">' + dateStr + '</td>' +
-          '<td class="py-1.5 pr-2 font-bold">' + (h.condition || h.mode || '—') + '</td>' +
+          '<td class="py-1.5 pr-2 text-gray-500">' + esc(dateStr) + '</td>' +
+          '<td class="py-1.5 pr-2 font-bold">' + esc(h.condition || h.mode) + '</td>' +
           '<td class="py-1.5 text-right font-black ' + scoreColor + '">' + h.score + '/' + h.total + '</td>' +
           '</tr>';
       }).join('') +
@@ -116,7 +131,7 @@ function renderRecord(data) {
       const isWeak = pct < 80;
       return '<div class="flex items-center gap-2 text-sm border-b border-gray-50 pb-1.5">' +
         '<span class="w-4 flex-shrink-0 font-black ' + (isWeak ? 'text-red-500' : 'text-green-600') + '">' + (isWeak ? '!' : '✓') + '</span>' +
-        '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + stat.indicator + '</span>' +
+        '<span class="font-bold text-gray-700 w-16 flex-shrink-0 text-xs">' + esc(stat.indicator) + '</span>' +
         '<div class="flex-1 rate-bar"><div class="rate-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
         '<span class="text-xs font-bold ml-2 w-20 text-right" style="color:' + color + '">' + stat.correct + '/' + stat.total + ' (' + pct + '%)</span>' +
         '</div>';
@@ -124,19 +139,60 @@ function renderRecord(data) {
     area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-3">📊 指標累計答對率</h3><div class="space-y-1.5">' + barsHTML + '</div></div>';
   }
 
-  // 答錯題目
+  // 答錯題目（可折疊）
   if (data.wrongQuestions && data.wrongQuestions.length > 0) {
-    const wrongHTML = data.wrongQuestions.slice(0, 10).map(q =>
-      '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm flex items-center justify-between">' +
-        '<div><span class="font-black text-red-500 text-xs">' + q.indicator + '</span>' +
-          ' <span class="text-gray-600">' + q.year + '年・第 ' + q.q_no + ' 題</span></div>' +
-        '<span class="text-gray-400 text-xs font-bold">答錯 ' + q.count + ' 次</span>' +
-      '</div>'
-    ).join('');
-    area.innerHTML += '<div class="glass rounded-2xl p-5"><h3 class="font-black text-gray-800 mb-1">❌ 常答錯的題目</h3><p class="text-xs text-gray-400 mb-3">跨多次練習統計</p><div class="space-y-2">' + wrongHTML + '</div></div>';
+    const optionLabels = ['①', '②', '③', '④'];
+    const wrongHTML = data.wrongQuestions.slice(0, 10).map(function(wq) {
+      const key = wq.year + '_' + wq.q_no;
+      const found = qMap.get(key);
+      let stemRow = '';
+      if (found) {
+        const ansText = found.options ? found.options[String(found.answer)] : '';
+        const ansLabel = optionLabels[(found.answer || 1) - 1] || '';
+        stemRow =
+          '<div class="mt-2 text-xs text-gray-600 bg-white rounded-lg px-3 py-2 border border-red-100">' +
+            '<div class="mb-1"><span class="text-gray-400">題幹：</span>' + esc(found.stem) + '</div>' +
+            '<div><span class="text-gray-400">正確答案：</span><span class="font-bold text-blue-700">' + esc(ansLabel) + ' ' + esc(ansText) + '</span></div>' +
+          '</div>';
+      }
+      return '<div class="bg-red-50 border border-red-100 rounded-xl px-4 py-2.5 text-sm">' +
+        '<div class="flex items-center justify-between">' +
+          '<div><span class="font-black text-red-500 text-xs">' + esc(wq.indicator) + '</span>' +
+            ' <span class="text-gray-600">' + esc(wq.year) + '年・第 ' + esc(wq.q_no) + ' 題</span></div>' +
+          '<span class="text-gray-400 text-xs font-bold">答錯 ' + esc(wq.count) + ' 次</span>' +
+        '</div>' +
+        stemRow +
+      '</div>';
+    }).join('');
+
+    const sectionId = 'wrong-list-' + Date.now();
+    area.innerHTML +=
+      '<div class="glass rounded-2xl p-5">' +
+        '<div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleWrongList(\'' + sectionId + '\', this)">' +
+          '<div>' +
+            '<h3 class="font-black text-gray-800 inline">❌ 常答錯的題目</h3>' +
+            '<span class="text-xs text-gray-400 ml-2">跨多次練習統計</span>' +
+          '</div>' +
+          '<span class="text-gray-500 font-bold text-sm toggle-arrow">▼</span>' +
+        '</div>' +
+        '<div id="' + sectionId + '" class="space-y-2 mt-3">' + wrongHTML + '</div>' +
+      '</div>';
   }
 
   area.classList.remove('hidden');
+}
+
+function toggleWrongList(sectionId, headerEl) {
+  const list = document.getElementById(sectionId);
+  const arrow = headerEl.querySelector('.toggle-arrow');
+  if (!list) return;
+  if (list.style.display === 'none') {
+    list.style.display = '';
+    if (arrow) arrow.textContent = '▼';
+  } else {
+    list.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+  }
 }
 </script>
 </body>

@@ -29,9 +29,9 @@
     .slide-in { animation: slideIn 0.2s ease-out; }
   </style>
 </head>
-<body class="flex flex-col items-center px-4 py-5">
+<body class="flex flex-col items-center px-4 py-5 md:py-8">
 
-  <div class="w-full max-w-lg">
+  <div class="w-full max-w-4xl">
 
     <!-- 頂部：進度 -->
     <div class="mb-4">
@@ -47,34 +47,34 @@
     <!-- 題目卡片 -->
     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
 
-      <div id="question-area" class="p-5 slide-in">
+      <div id="question-area" class="p-5 md:p-8 slide-in">
         <!-- 圖片 -->
         <div id="img-area" class="hidden mb-4">
           <img id="q-img" src="" alt="題目圖片" class="w-full rounded-xl border border-gray-100 block cursor-zoom-in" onclick="toggleZoom(this)">
         </div>
 
         <!-- 題幹 -->
-        <p id="q-stem" class="text-base font-bold text-gray-800 mb-5 leading-relaxed"></p>
+        <p id="q-stem" class="text-base md:text-xl font-bold text-gray-800 mb-5 md:mb-7 leading-relaxed"></p>
 
         <!-- 選項 -->
-        <div id="q-options" class="space-y-2.5"></div>
+        <div id="q-options" class="space-y-2.5 md:space-y-3"></div>
 
         <!-- 回饋 -->
         <div id="feedback" class="hidden mt-4 py-3 px-4 rounded-xl text-sm font-bold text-center"></div>
       </div>
 
       <!-- 導航 -->
-      <div class="flex gap-2 px-5 pb-5">
+      <div class="flex gap-2 md:gap-3 px-5 md:px-8 pb-5 md:pb-8">
         <button onclick="goPrev()" id="btn-prev"
-          class="px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm transition hover:border-blue-300 hover:text-blue-600">
+          class="px-4 md:px-6 py-3 md:py-4 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm md:text-base transition hover:border-blue-300 hover:text-blue-600">
           ← 上一題
         </button>
         <button onclick="goNext()" id="btn-next"
-          class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm transition">
+          class="flex-1 py-3 md:py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm md:text-base transition">
           下一題 →
         </button>
         <button onclick="submitQuiz()" id="btn-submit"
-          class="hidden flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-sm transition">
+          class="hidden flex-1 py-3 md:py-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-sm md:text-base transition">
           提交成績 ✓
         </button>
       </div>
@@ -150,7 +150,7 @@ function renderQuestion(idx) {
   }
   optKeys.forEach(key => {
     const btn = document.createElement('button');
-    btn.className = 'opt-btn w-full px-4 py-3.5 rounded-xl font-bold text-gray-700 text-sm flex items-center gap-3';
+    btn.className = 'opt-btn w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl font-bold text-gray-700 text-sm md:text-lg flex items-center gap-3';
     btn.dataset.key = key;
     const labelText = isImgOnly
       ? '<span class="text-blue-500 font-black text-lg flex-shrink-0">' + OPT_SYMBOLS[Number(key) - 1] + '</span>'

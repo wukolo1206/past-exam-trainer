@@ -23,7 +23,7 @@
 </head>
 <body class="antialiased p-4 md:p-8">
 
-  <div class="max-w-4xl mx-auto space-y-4">
+  <div class="max-w-7xl mx-auto space-y-4">
     <div class="flex items-center justify-between">
       <h1 class="text-xl font-black text-blue-900">👨‍🏫 教師分析 Dashboard</h1>
       <div class="flex items-center gap-3">
@@ -33,7 +33,7 @@
     </div>
 
     <!-- 選班級 -->
-    <div class="glass rounded-2xl p-5">
+    <div class="glass rounded-2xl p-5 md:p-6">
       <div class="flex gap-3 items-end">
         <div class="flex-1">
           <label class="block text-xs font-bold text-gray-500 mb-1">選擇班級</label>
@@ -51,19 +51,19 @@
     <div id="loading" class="hidden text-center text-gray-400 py-8 font-bold">載入中...</div>
 
     <!-- 指標熱圖 -->
-    <div id="section-heatmap" class="glass rounded-2xl p-5 hidden">
+    <div id="section-heatmap" class="glass rounded-2xl p-5 md:p-6 hidden">
       <h3 class="font-black text-gray-800 mb-3">📊 指標答對率熱圖</h3>
       <div id="heatmap-list" class="space-y-2"></div>
     </div>
 
     <!-- 最難題 Top 10 -->
-    <div id="section-hard" class="glass rounded-2xl p-5 hidden">
+    <div id="section-hard" class="glass rounded-2xl p-5 md:p-6 hidden">
       <h3 class="font-black text-gray-800 mb-3">😓 最難題 Top 10</h3>
       <div id="hard-list"></div>
     </div>
 
     <!-- 學生進度矩陣 -->
-    <div id="section-matrix" class="glass rounded-2xl p-5 hidden">
+    <div id="section-matrix" class="glass rounded-2xl p-5 md:p-6 hidden">
       <h3 class="font-black text-gray-800 mb-3">🗂 班級進度矩陣（學生 × 指標）</h3>
       <p class="text-xs text-gray-400 mb-3">🟩 ≥80%　🟨 60-79%　🟥 &lt;60%　灰 = 尚無作答</p>
       <div class="overflow-x-auto">
