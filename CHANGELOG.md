@@ -1,5 +1,13 @@
 # CHANGELOG — past-exam-trainer
 
+## @2026-05-27 — 110年六年級題目補完
+
+- 從 `110_六年級_題本.pdf` 以 PyMuPDF 2x 縮放自動裁切，產出 25 道題目圖片
+- 新增 18 道缺漏題目（q01-q09, q12-q17, q20, q21, q25），補入官方答案與課綱指標
+- 修正 7 筆既有條目（q10, q11, q18-19, q22-24）的答案與評量向度欄位
+- Google Sheets 同步：7 筆更新 + 18 筆新增
+- 全資料庫共 702 題
+
 ## @2026-05-26 — 子專案文件初始化
 
 - 新增本子專案自己的 `CLAUDE.md`、`AGENTS.md`、`CHANGELOG.md`、`PITFALLS.md`、`DECISIONS.md`、`handoff.md`

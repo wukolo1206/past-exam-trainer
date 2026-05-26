@@ -2,10 +2,10 @@
 project: past-exam-trainer
 category: 學科工具集
 status: 維護中
-version: "版面寬度改善與專案文件補齊 2026-05-26"
+version: "110年六年級題目補完 2026-05-27"
 url: https://wukolo1206.github.io/past-exam-trainer/
-next_action: 重開機後線上驗證首頁、練習頁、紀錄頁、教師頁版面寬度
-updated: 2026-05-26
+next_action: 線上驗證 110 六年級圖片題顯示正常，再進行指標精修
+updated: 2026-05-27
 ---
 
 # CLAUDE.md — past-exam-trainer
