@@ -1,10 +1,10 @@
----
+﻿---
 project: past-exam-trainer
 category: 學科工具集
-status: 開發中
-version: "寬版介面調整 2026-05-26"
+status: 維護中
+version: "版面寬度改善與專案文件補齊 2026-05-26"
 url: https://wukolo1206.github.io/past-exam-trainer/
-next_action: 確認 GitHub Pages 已同步寬版介面，並整理未追蹤備份檔
+next_action: 重開機後線上驗證首頁、練習頁、紀錄頁、教師頁版面寬度
 updated: 2026-05-26
 ---
 
@@ -58,3 +58,4 @@ updated: 2026-05-26
 
 - 2026-05-26 已 push 寬版介面調整 commit `4d050b8`，GitHub raw 已更新，但 Pages 檢查時曾仍讀到舊內容，需稍後再確認同步狀態。
 - 子 repo 目前曾出現未追蹤備份檔與工具檔，提交前務必用 `git status -sb` 檢查範圍。
+
