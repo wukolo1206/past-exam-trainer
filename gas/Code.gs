@@ -112,6 +112,9 @@ function getQuestions(gradeFilter, yearFilter) {
     var hasImage = r[colIdx['has_image']];
     hasImage = (hasImage === true || hasImage === 'TRUE' || hasImage === 'true' || hasImage === 1 || hasImage === '1');
 
+    var domainRaw = colIdx['assessment_domain'] !== undefined ? String(r[colIdx['assessment_domain']] || '') : '';
+    var typeRaw   = colIdx['assessment_type']   !== undefined ? String(r[colIdx['assessment_type']]   || '') : '';
+
     questions.push({
       year: parseInt(year, 10),
       grade: parseInt(grade, 10),
@@ -122,7 +125,9 @@ function getQuestions(gradeFilter, yearFilter) {
       indicators: indicators,
       indicator_unit: String(r[colIdx['indicator_unit']] || ''),
       has_image: hasImage,
-      image_url: String(r[colIdx['image_url']] || '')
+      image_url: String(r[colIdx['image_url']] || ''),
+      assessment_domain: domainRaw || null,
+      assessment_type: typeRaw || null
     });
   }
 
