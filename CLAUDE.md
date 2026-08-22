@@ -2,9 +2,9 @@
 project: past-exam-trainer
 category: 學科工具集
 status: 維護中
-version: "110年六年級題目補完 2026-05-27"
+version: "全年級指標精修完成（702題）2026-05-27"
 url: https://wukolo1206.github.io/past-exam-trainer/
-next_action: 線上驗證 110 六年級圖片題顯示正常，再進行指標精修
+next_action: exam-builder.html 自訂考卷產生器（篩選題目＋列印/Word/PDF 輸出）
 updated: 2026-05-27
 ---
 

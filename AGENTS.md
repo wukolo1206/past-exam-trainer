@@ -4,7 +4,7 @@
 
 1. 讀本資料夾 `CLAUDE.md`，確認架構、部署方式、不能動的地方與驗證清單。
 2. 讀本資料夾 `handoff.md`，確認上一個 session 停在哪裡。
-3. 遵守 `D:\備課ai\AGENTS.md` 與上層 `D:\備課ai\三下數學\AGENTS.md` 的全域規則。
+3. 遵守 `D:\備課ai\AGENTS.md` 與上層 `D:\備課ai\康軒數學\AGENTS.md` 的全域規則。
 
 ## 專案定位
 
