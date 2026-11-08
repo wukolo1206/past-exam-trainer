@@ -11,7 +11,7 @@
 ## @2026-05-26 — 子專案文件初始化
 
 - 新增本子專案自己的 `CLAUDE.md`、`AGENTS.md`、`CHANGELOG.md`、`PITFALLS.md`、`DECISIONS.md`、`handoff.md`
-- 將部署方式、不能動的地方、驗證清單與目前交接狀態收斂到 `past-exam-trainer/` 內
+- 將部署方式、不能動的地方、驗證清單與目前交接狀態收斂到 `00全年級_學力檢測考古題_past-exam-trainer/` 內
 
 ## @2026-05-26 — 寬版介面調整
 
