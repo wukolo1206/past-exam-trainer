@@ -6,7 +6,7 @@ prepare_data.py
 import json, shutil, os
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-KM_DIR = os.path.join(BASE, '..', 'knowledge-map', 'data')
+KM_DIR = os.path.join(BASE, '..', '00全年級_知識地圖_knowledge-map', 'data')
 IMG_SRC = os.path.join(BASE, '..', '學力檢測考古題', 'img_questions')
 OUT_DIR = os.path.join(BASE, 'data')
 IMG_DST = os.path.join(BASE, 'img')
